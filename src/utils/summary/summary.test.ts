@@ -1,8 +1,8 @@
 import { describe, expect, it } from "vitest";
 
-import { summarizeRows } from "./summary";
+import type { ParsedCsvRow } from "src/utils/csv/types";
 
-import type { ParsedCsvRow } from "./types";
+import { summarizeRows } from "./summary";
 
 describe("summarizeRows", () => {
   it("calculates total, count, and average for valid rows only", () => {

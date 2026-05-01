@@ -1,11 +1,12 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { Button } from "src/components/shared/Button";
 import { useMessage } from "src/components/shared/Message/MessageProvider";
 import { Stepper } from "src/components/shared/Stepper";
 import { Table, type TableColumn } from "src/components/shared/Table";
 import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
+import { CSV_READ_TERMINAL_ERROR, readFileAsTextWithRetry } from "src/utils/csv/readFileAsTextWithRetry";
 import type { ParsedCsvRow } from "src/utils/csv/types";
 import { summarizeRows } from "src/utils/summary";
 
@@ -23,6 +24,7 @@ export function BatchTransferModal() {
     [],
   );
   const message = useMessage();
+  const [csvReadStatus, setCsvReadStatus] = useState<string | null>(null);
   const {
     isOpen,
     step,
@@ -64,20 +66,12 @@ export function BatchTransferModal() {
     [],
   );
 
-  function readFileAsText(file: File): Promise<string> {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result ?? ""));
-      reader.onerror = () => reject(new Error("Unable to read uploaded file"));
-      reader.readAsText(file);
-    });
-  }
-
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
     setUploadError(null);
+    setCsvReadStatus(null);
 
     const fileName = file.name.toLowerCase();
     const isCsvByExt = fileName.endsWith(".csv");
@@ -93,19 +87,25 @@ export function BatchTransferModal() {
     }
 
     try {
-      const text = await readFileAsText(file);
+      const text = await readFileAsTextWithRetry(file, {
+        onRetry: () => setCsvReadStatus("Reading your CSV… retrying."),
+      });
+      setCsvReadStatus(null);
       if (!text.trim()) {
         setSelectedFileName("");
         setCsvContent("");
         setUploadError("CSV file is empty. Please upload a file with valid records.");
+        event.target.value = "";
         return;
       }
       setSelectedFileName(file.name);
       setCsvContent(text);
     } catch {
+      setCsvReadStatus(null);
       setSelectedFileName("");
       setCsvContent("");
-      setUploadError("Unable to read the uploaded CSV file. Please try again.");
+      setUploadError(CSV_READ_TERMINAL_ERROR);
+      event.target.value = "";
     }
   }
 
@@ -183,6 +183,11 @@ export function BatchTransferModal() {
               {selectedFileName ? (
                 <div className={batchTransferModalClassNames.uploadMeta}>
                   Selected file: {selectedFileName}
+                </div>
+              ) : null}
+              {csvReadStatus ? (
+                <div aria-live="polite" className={batchTransferModalClassNames.uploadMeta}>
+                  {csvReadStatus}
                 </div>
               ) : null}
               {uploadError ? (

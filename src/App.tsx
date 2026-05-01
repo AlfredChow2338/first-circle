@@ -74,7 +74,7 @@ function AppContent() {
       <input
         className={appClassNames.searchInput}
         aria-label="Search Transactions"
-        placeholder="Search by account number or account holder name"
+        placeholder="Search by acct no. or acct holder name"
         value={searchQuery}
         onChange={(event) => setSearchQuery(event.target.value)}
       />

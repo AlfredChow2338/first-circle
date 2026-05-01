@@ -51,4 +51,5 @@ export const moreMenuItemButtonStyle = style({
 
 export const searchInputStyle = style({
   marginTop: "20px",
+  textOverflow: "ellipsis",
 });

@@ -129,7 +129,7 @@ describe("App flow", () => {
     fireEvent.click(screen.getByText("Next"));
     expect(await screen.findByRole("heading", { level: 3, name: "Review Records" })).toBeInTheDocument();
     fireEvent.click(screen.getByText("Next"));
-    fireEvent.click(screen.getByText("Confirm Transfer"));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     await waitFor(() => {
       expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(initial);
     });
