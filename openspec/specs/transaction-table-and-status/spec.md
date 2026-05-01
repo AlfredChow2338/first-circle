@@ -15,8 +15,8 @@ The system SHALL render status labels with the required mapping: `Pending` as ye
 - **THEN** the UI applies the corresponding label text and mapped color treatment
 
 ### Requirement: Provide failed status error tooltip
-The system SHALL show the associated error message as tooltip content for rows with `Failed` status.
+The system SHALL show an info icon next to the `Failed` status label and SHALL present the associated error message as tooltip content for rows with `Failed` status.
 
 #### Scenario: View failed reason from status cell
-- **WHEN** the user hovers or focuses on a Failed status indicator
+- **WHEN** the user hovers or focuses on the info icon adjacent to a Failed status indicator
 - **THEN** the tooltip presents the row's associated error message

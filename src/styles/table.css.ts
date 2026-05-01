@@ -54,3 +54,72 @@ export const tableRow = style({
     background: "rgba(255, 255, 255, 0.02)",
   },
 });
+
+export const statusInline = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: vars.space.sm,
+});
+
+export const statusTooltipWrapper = style({
+  position: "relative",
+  display: "inline-flex",
+  alignItems: "center",
+  "@media": {
+    "screen and (max-width: 768px)": {
+      top: "4px",
+    },
+  },
+});
+
+export const failedInfoIconButton = style({
+  width: "18px",
+  height: "18px",
+  borderRadius: "9999px",
+  border: `1px solid ${vars.color.cardBorder}`,
+  background: "rgba(255, 255, 255, 0.05)",
+  color: vars.color.textSecondary,
+  padding: 0,
+  display: "inline-flex",
+  alignItems: "center",
+  justifyContent: "center",
+  cursor: "pointer",
+  fontSize: "11px",
+  fontWeight: 700,
+  lineHeight: 1,
+  selectors: {
+    "&:hover": {
+      background: "rgba(255, 255, 255, 0.12)",
+      color: vars.color.textPrimary,
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${vars.color.primaryBlue}`,
+      outlineOffset: "2px",
+    },
+  },
+});
+
+export const tooltipContent = style({
+  position: "absolute",
+  bottom: "calc(100% + 8px)",
+  right: 0,
+  zIndex: 10,
+  background: vars.color.cardBg,
+  color: vars.color.textPrimary,
+  border: `1px solid ${vars.color.cardBorder}`,
+  borderRadius: vars.borderRadius.md,
+  boxShadow: vars.shadow.md,
+  padding: `${vars.space.sm} ${vars.space.md}`,
+  width: "max-content",
+  maxWidth: "280px",
+  whiteSpace: "normal",
+  wordBreak: "break-word",
+  fontSize: "12px",
+  lineHeight: 1.4,
+});
+
+export const statusTableCell = style({
+  overflow: "visible",
+  textOverflow: "clip",
+  maxWidth: "none",
+});

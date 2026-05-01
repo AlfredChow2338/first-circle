@@ -1,5 +1,5 @@
-import * as Tooltip from "@radix-ui/react-tooltip";
 import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+import { useState } from "react";
 
 import { STATUS_META } from "src/domain/status";
 import type { TransactionRecord } from "src/domain/types";
@@ -9,6 +9,41 @@ import * as tableStyles from "src/styles/table.css";
 type Props = {
   transactions: TransactionRecord[];
 };
+
+type FailedStatusCellProps = {
+  color: string;
+  errorMessage: string;
+};
+
+function FailedStatusCell({ color, errorMessage }: FailedStatusCellProps) {
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+
+  return (
+    <span className={tableStyles.statusInline}>
+      <span style={{ color }}>Failed</span>
+      <span className={tableStyles.statusTooltipWrapper}>
+        <button
+          type="button"
+          aria-label="Failed transaction details"
+          aria-expanded={isTooltipOpen}
+          className={tableStyles.failedInfoIconButton}
+          onClick={() => setIsTooltipOpen((open) => !open)}
+          onMouseEnter={() => setIsTooltipOpen(true)}
+          onMouseLeave={() => setIsTooltipOpen(false)}
+          onFocus={() => setIsTooltipOpen(true)}
+          onBlur={() => setIsTooltipOpen(false)}
+        >
+          i
+        </button>
+        {isTooltipOpen ? (
+          <span role="tooltip" className={tableStyles.tooltipContent}>
+            {errorMessage}
+          </span>
+        ) : null}
+      </span>
+    </span>
+  );
+}
 
 export function TransactionTable({ transactions }: Props) {
   const columns = [
@@ -23,20 +58,7 @@ export function TransactionTable({ transactions }: Props) {
         const tx = row.original;
         const color = STATUS_META[tx.status].color;
         if (tx.status === "Failed" && tx.errorMessage) {
-          return (
-            <Tooltip.Provider>
-              <Tooltip.Root>
-                <Tooltip.Trigger asChild>
-                  <span aria-label="Failed transaction" style={{ color, textDecoration: "underline dotted" }}>
-                    {tx.status}
-                  </span>
-                </Tooltip.Trigger>
-                <Tooltip.Portal>
-                  <Tooltip.Content sideOffset={6}>{tx.errorMessage}</Tooltip.Content>
-                </Tooltip.Portal>
-              </Tooltip.Root>
-            </Tooltip.Provider>
-          );
+          return <FailedStatusCell color={color} errorMessage={tx.errorMessage} />;
         }
         return <span style={{ color }}>{tx.status}</span>;
       },
@@ -65,7 +87,15 @@ export function TransactionTable({ transactions }: Props) {
           {table.getRowModel().rows.map((row) => (
             <tr key={row.id} className={tableStyles.tableRow}>
               {row.getVisibleCells().map((cell) => (
-                <td key={cell.id} className={tableStyles.tableCell}>{flexRender(cell.column.columnDef.cell, cell.getContext()) ?? String(cell.getValue() ?? "")}</td>
+                <td
+                  key={cell.id}
+                  className={`${tableStyles.tableCell} ${
+                    cell.column.id === "status" ? tableStyles.statusTableCell : ""
+                  }`}
+                >
+                  {flexRender(cell.column.columnDef.cell, cell.getContext()) ??
+                    String(cell.getValue() ?? "")}
+                </td>
               ))}
             </tr>
           ))}

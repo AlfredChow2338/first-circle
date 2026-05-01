@@ -65,9 +65,11 @@ beforeEach(() => {
 });
 
 describe("App flow", () => {
+  const uploadButtonName = "Upload Transaction (.csv)";
+
   it("opens modal and preserves state across steps", async () => {
     render(<App />);
-    fireEvent.click(screen.getAllByRole("button", { name: "Batch Transfer" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
     expect(screen.getByText("Step 1 of 3")).toBeInTheDocument();
 
     fireEvent.change(screen.getByLabelText("Batch Transfer Name"), { target: { value: "Payroll Batch" } });
@@ -93,7 +95,7 @@ describe("App flow", () => {
 
   it("shows upload error for non-csv files", async () => {
     render(<App />);
-    fireEvent.click(screen.getAllByRole("button", { name: "Batch Transfer" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
     const textFile = new File(["not,csv"], "invalid.txt", { type: "text/plain" });
     fireEvent.change(screen.getByLabelText("CSV File Upload"), { target: { files: [textFile] } });
     expect(await screen.findByRole("alert")).toHaveTextContent("Please upload a valid .csv file.");
@@ -104,7 +106,7 @@ describe("App flow", () => {
   it("appends transactions when confirmed", async () => {
     render(<App />);
     const initial = useBatchTransferStore.getState().transactions.length;
-    fireEvent.click(screen.getAllByRole("button", { name: "Batch Transfer" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
     const csvFile = new File(
       [
         "Transaction Date,Account Number,Account Holder Name,Amount\n2025-02-20,000-123456789-01,John Doe,100.00",
@@ -123,7 +125,7 @@ describe("App flow", () => {
 
   it("clears modal state when closed from cross icon", async () => {
     render(<App />);
-    fireEvent.click(screen.getAllByRole("button", { name: "Batch Transfer" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
     fireEvent.change(screen.getByLabelText("Batch Transfer Name"), { target: { value: "To Be Cleared" } });
 
     const csvFile = new File(
@@ -137,7 +139,7 @@ describe("App flow", () => {
     expect(await screen.findByText("Selected file: valid.csv")).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("button", { name: "Close modal" }));
-    fireEvent.click(screen.getAllByRole("button", { name: "Batch Transfer" })[0]);
+    fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
 
     expect(screen.getByLabelText("Batch Transfer Name")).toHaveValue("");
     expect(screen.queryByText("Selected file: valid.csv")).not.toBeInTheDocument();

@@ -4,6 +4,8 @@ import { useBatchTransferStore } from "src/state/useBatchTransferStore";
 import { BatchTransferModal } from "src/ui/BatchTransferModal";
 import { TransactionTable } from "src/ui/TransactionTable";
 
+import { appClassNames } from "./ui/config";
+
 import type { ChangeEvent } from "react";
 
 export default function App() {
@@ -30,15 +32,12 @@ export default function App() {
     setSnapshotMessage("Exported transactions snapshot.");
   }
 
-  function handleImportClick() {
-    fileInputRef.current?.click();
-  }
-
   async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const validJsonType = file.type === "application/json" || file.name.toLowerCase().endsWith(".json");
+    const validJsonType =
+      file.type === "application/json" || file.name.toLowerCase().endsWith(".json");
     if (!validJsonType) {
       setSnapshotMessage("Please select a valid JSON snapshot file.");
       event.target.value = "";
@@ -58,9 +57,11 @@ export default function App() {
   return (
     <main>
       <h1>Batch Transaction Processing System</h1>
-      <button onClick={openModal}>Batch Transfer</button>
-      <button onClick={handleExportTransactions}>Export Transactions</button>
-      <button onClick={handleImportClick}>Import Transactions</button>
+      <div className={appClassNames.buttonWrapper}>
+        <button onClick={openModal}>Upload Transaction (.csv)</button>
+        <button onClick={handleExportTransactions}>Export Transactions (.json)</button>
+        {/* <button onClick={handleImportClick}>Import Transactions (.json)</button> */}
+      </div>
       <input
         ref={fileInputRef}
         type="file"
