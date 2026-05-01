@@ -1,7 +1,10 @@
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import * as Tooltip from "@radix-ui/react-tooltip";
-import { STATUS_META } from "../domain/status";
-import type { TransactionRecord } from "../domain/types";
+import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
+
+import { STATUS_META } from "src/domain/status";
+import type { TransactionRecord } from "src/domain/types";
+import * as tableStyles from "src/styles/table.css";
+
 
 type Props = {
   transactions: TransactionRecord[];
@@ -47,25 +50,27 @@ export function TransactionTable({ transactions }: Props) {
   });
 
   return (
-    <table>
-      <thead>
-        {table.getHeaderGroups().map((headerGroup) => (
-          <tr key={headerGroup.id}>
-            {headerGroup.headers.map((header) => (
-              <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
-            ))}
-          </tr>
-        ))}
-      </thead>
-      <tbody>
-        {table.getRowModel().rows.map((row) => (
-          <tr key={row.id}>
-            {row.getVisibleCells().map((cell) => (
-              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext()) ?? String(cell.getValue() ?? "")}</td>
-            ))}
-          </tr>
-        ))}
-      </tbody>
-    </table>
+    <div className={tableStyles.tableContainer}>
+      <table className={tableStyles.table}>
+        <thead className={tableStyles.tableHead}>
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id}>
+              {headerGroup.headers.map((header) => (
+                <th key={header.id} className={tableStyles.tableHeader}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className={tableStyles.tableRow}>
+              {row.getVisibleCells().map((cell) => (
+                <td key={cell.id} className={tableStyles.tableCell}>{flexRender(cell.column.columnDef.cell, cell.getContext()) ?? String(cell.getValue() ?? "")}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }

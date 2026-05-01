@@ -1,7 +1,13 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo } from "react";
-import { summarizeRows } from "../domain/summary";
-import { APPROVERS, useBatchTransferStore } from "../state/useBatchTransferStore";
+
+import { summarizeRows } from "src/domain/summary";
+import {
+  APPROVERS,
+  useBatchTransferStore,
+} from "src/state/useBatchTransferStore";
+
+import { batchTransferModalClassNames } from "./config";
 
 export function BatchTransferModal() {
   const {
@@ -24,13 +30,18 @@ export function BatchTransferModal() {
   const summary = useMemo(() => summarizeRows(parsedRows), [parsedRows]);
 
   return (
-    <Dialog.Root open={isOpen} onOpenChange={(open) => (!open ? closeModal() : undefined)}>
+    <Dialog.Root
+      open={isOpen}
+      onOpenChange={(open) => (!open ? closeModal() : undefined)}
+    >
       <Dialog.Portal>
-        <Dialog.Overlay />
-        <Dialog.Content>
+        <Dialog.Overlay className={batchTransferModalClassNames.overlay} />
+        <Dialog.Content className={batchTransferModalClassNames.wrapper}>
           <Dialog.Title>Batch Transfer</Dialog.Title>
-          <Dialog.Description>Three-step batch transfer workflow</Dialog.Description>
-          <p>Step {step} of 3</p>
+          <Dialog.Description>
+            Three-step batch transfer workflow
+          </Dialog.Description>
+          <div className={batchTransferModalClassNames.stepIndicator}>Step {step} of 3</div>
           {step === 1 && (
             <section>
               <label>
@@ -51,7 +62,11 @@ export function BatchTransferModal() {
               </label>
               <label>
                 Approver Selection
-                <select aria-label="Approver Selection" value={approver} onChange={(e) => setApprover(e.target.value)}>
+                <select
+                  aria-label="Approver Selection"
+                  value={approver}
+                  onChange={(e) => setApprover(e.target.value)}
+                >
                   {APPROVERS.map((item) => (
                     <option value={item} key={item}>
                       {item}
@@ -101,11 +116,22 @@ export function BatchTransferModal() {
           {step === 3 && (
             <section>
               <h3>Summary</h3>
-              <p>Batch Transfer Name: {batchName}</p>
-              <p>Approver: {approver}</p>
-              <p>Total Amount: {summary.totalAmount.toFixed(2)}</p>
-              <p>Number of Payments: {summary.paymentCount}</p>
-              <p>Average Payment Value: {summary.averagePayment.toFixed(2)}</p>
+              <div className={batchTransferModalClassNames.summaryItem}>
+                <strong>Batch Transfer Name:</strong> {batchName}
+              </div>
+              <div className={batchTransferModalClassNames.summaryItem}>
+                <strong>Approver:</strong> {approver}
+              </div>
+              <div className={batchTransferModalClassNames.summaryItem}>
+                <strong>Total Amount:</strong> ${summary.totalAmount.toFixed(2)}
+              </div>
+              <div className={batchTransferModalClassNames.summaryItem}>
+                <strong>Number of Payments:</strong> {summary.paymentCount}
+              </div>
+              <div className={batchTransferModalClassNames.summaryItem}>
+                <strong>Average Payment Value:</strong> $
+                {summary.averagePayment.toFixed(2)}
+              </div>
               <button onClick={prevStep}>Back</button>
               <button onClick={confirmBatch}>Confirm</button>
             </section>

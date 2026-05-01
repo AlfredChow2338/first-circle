@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
+
 import { summarizeRows } from "./summary";
+
 import type { ParsedCsvRow } from "./types";
 
 describe("summarizeRows", () => {

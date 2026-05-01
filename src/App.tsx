@@ -1,6 +1,6 @@
-import { BatchTransferModal } from "./ui/BatchTransferModal";
-import { TransactionTable } from "./ui/TransactionTable";
-import { useBatchTransferStore } from "./state/useBatchTransferStore";
+import { useBatchTransferStore } from "src/state/useBatchTransferStore";
+import { BatchTransferModal } from "src/ui/BatchTransferModal";
+import { TransactionTable } from "src/ui/TransactionTable";
 
 export default function App() {
   const openModal = useBatchTransferStore((s) => s.openModal);

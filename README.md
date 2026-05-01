@@ -18,17 +18,11 @@
 
 ### Architecture
 
-Layer 1: View
+- View: UI Components for visualisation.
 
-UI Components.
+- Domain: Business logic such as parse, validate and summarize. Separate to improve testability and allows TDD from pure functions before UI wiring.
 
-Layer 2: Domain
-
-Business logic such as parse, validate and summarize. Separate to improve testability and allows TDD from pure functions before UI wiring.
-
-Layer 3: State Orchestration
-
-Steppers and session data.
+- State Orchestration: Steppers and session data.
 
 ### Tech stack (TS-friendly)
 
@@ -41,4 +35,24 @@ Steppers and session data.
 - Radix dialog/tooltip
 - Vitest
 - Reat Testing Library (RTL)
+
+- vanilla-extract/css
+  ✅ Type-safe - ClassNames are typed and autocompleted
+  ✅ Scoped - No CSS conflicts or naming collisions  
+  ✅ Tree-shakeable - Unused styles are removed from production
+
 - Package manager: Pnpm 10
+
+### Import Rules
+
+- Do not use relative imports deeper than `../../..`; use `src/...` instead.
+- Import order is enforced as: libraries -> `src/...` -> relative (`./`, `../`).
+- Keep a blank line between import groups.
+
+### Lint and Format Workflow
+
+- Format code: `pnpm format`
+- Check formatting: `pnpm format:check`
+- Lint code: `pnpm lint`
+- Autofix lint issues: `pnpm lint:fix`
+- Recommended local sequence: `pnpm format && pnpm lint`

@@ -1,7 +1,8 @@
 import { create } from "zustand";
-import { parseCsvText } from "../domain/csv";
-import { summarizeRows } from "../domain/summary";
-import type { ParsedCsvRow, TransactionRecord } from "../domain/types";
+
+import { parseCsvText } from "src/domain/csv";
+import { summarizeRows } from "src/domain/summary";
+import type { ParsedCsvRow, TransactionRecord } from "src/domain/types";
 
 type Step = 1 | 2 | 3;
 
