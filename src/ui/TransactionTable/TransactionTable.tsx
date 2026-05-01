@@ -1,10 +1,9 @@
-import { flexRender, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { useState } from "react";
 
 import { STATUS_META } from "src/domain/status";
 import type { TransactionRecord } from "src/domain/types";
 import * as tableStyles from "src/styles/table.css";
-
+import { Table, type TableColumn } from "src/ui/shared/Table";
 
 type Props = {
   transactions: TransactionRecord[];
@@ -46,16 +45,16 @@ function FailedStatusCell({ color, errorMessage }: FailedStatusCellProps) {
 }
 
 export function TransactionTable({ transactions }: Props) {
-  const columns = [
-    { header: "Transaction Date", accessorKey: "transactionDate" },
-    { header: "Account Number", accessorKey: "accountNumber" },
-    { header: "Account Holder Name", accessorKey: "accountHolderName" },
-    { header: "Amount", accessorKey: "amount" },
+  const columns: TableColumn<TransactionRecord>[] = [
+    { id: "transactionDate", header: "Transaction Date", cell: (tx) => tx.transactionDate },
+    { id: "accountNumber", header: "Account Number", cell: (tx) => tx.accountNumber },
+    { id: "accountHolderName", header: "Account Holder Name", cell: (tx) => tx.accountHolderName },
+    { id: "amount", header: "Amount", cell: (tx) => tx.amount },
     {
+      id: "status",
       header: "Status",
-      accessorKey: "status",
-      cell: ({ row }: { row: { original: TransactionRecord } }) => {
-        const tx = row.original;
+      cellClassName: tableStyles.statusTableCell,
+      cell: (tx) => {
         const color = STATUS_META[tx.status].color;
         if (tx.status === "Failed" && tx.errorMessage) {
           return <FailedStatusCell color={color} errorMessage={tx.errorMessage} />;
@@ -65,42 +64,11 @@ export function TransactionTable({ transactions }: Props) {
     },
   ];
 
-  const table = useReactTable({
-    data: transactions,
-    columns,
-    getCoreRowModel: getCoreRowModel(),
-  });
-
   return (
-    <div className={tableStyles.tableContainer}>
-      <table className={tableStyles.table}>
-        <thead className={tableStyles.tableHead}>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th key={header.id} className={tableStyles.tableHeader}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className={tableStyles.tableRow}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className={`${tableStyles.tableCell} ${
-                    cell.column.id === "status" ? tableStyles.statusTableCell : ""
-                  }`}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext()) ??
-                    String(cell.getValue() ?? "")}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+    <Table
+      data={transactions}
+      columns={columns}
+      getRowKey={(row, index) => `${row.accountNumber}-${index}`}
+    />
   );
 }

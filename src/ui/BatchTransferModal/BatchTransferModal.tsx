@@ -2,7 +2,9 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 
 import { summarizeRows } from "src/domain/summary";
+import type { ParsedCsvRow } from "src/domain/types";
 import { APPROVERS, useBatchTransferStore } from "src/state/useBatchTransferStore";
+import { Table, type TableColumn } from "src/ui/shared/Table";
 
 import { batchTransferModalClassNames } from "./config";
 
@@ -34,6 +36,16 @@ export function BatchTransferModal() {
   const hasValidationErrors = useMemo(
     () => parsedRows.some((row) => Object.keys(row.errors).length > 0),
     [parsedRows],
+  );
+  const reviewColumns = useMemo<TableColumn<ParsedCsvRow>[]>(
+    () => [
+      { id: "transactionDate", header: "Transaction Date", cell: (row) => row.transactionDate },
+      { id: "accountNumber", header: "Account Number", cell: (row) => row.accountNumber },
+      { id: "accountHolderName", header: "Account Holder Name", cell: (row) => row.accountHolderName },
+      { id: "amountRaw", header: "Amount", cell: (row) => row.amountRaw },
+      { id: "errors", header: "Errors", cell: (row) => Object.values(row.errors).join(", ") },
+    ],
+    [],
   );
 
   function readFileAsText(file: File): Promise<string> {
@@ -111,6 +123,9 @@ export function BatchTransferModal() {
             </button>
           </Dialog.Close>
           <Dialog.Title>Batch Transfer</Dialog.Title>
+          <Dialog.Description>
+            Upload and review batch transactions before confirming transfer submission.
+          </Dialog.Description>
           <div className={batchTransferModalClassNames.stepIndicator}>Step {step} of 3</div>
           {step === 1 && (
             <section>
@@ -179,30 +194,7 @@ export function BatchTransferModal() {
                   Some transactions have validation errors. Please review before continuing.
                 </div>
               ) : null}
-              <div className={batchTransferModalClassNames.reviewTableWrapper}>
-                <table className={batchTransferModalClassNames.reviewTable}>
-                  <thead>
-                    <tr>
-                      <th>Transaction Date</th>
-                      <th>Account Number</th>
-                      <th>Account Holder Name</th>
-                      <th>Amount</th>
-                      <th>Errors</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {parsedRows.map((row) => (
-                      <tr key={row.rowNumber}>
-                        <td>{row.transactionDate}</td>
-                        <td>{row.accountNumber}</td>
-                        <td>{row.accountHolderName}</td>
-                        <td>{row.amountRaw}</td>
-                        <td>{Object.values(row.errors).join(", ")}</td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+              <Table data={parsedRows} columns={reviewColumns} getRowKey={(row) => row.rowNumber} />
               <button onClick={prevStep}>Back</button>
               <button onClick={nextStep}>Next</button>
             </section>

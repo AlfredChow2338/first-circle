@@ -127,18 +127,6 @@ export const uploadError = style({
   fontWeight: 500,
 });
 
-export const reviewTableWrapper = style({
-  width: "100%",
-  overflowX: "auto",
-  WebkitOverflowScrolling: "touch",
-  marginBottom: vars.space.md,
-});
-
-export const reviewTable = style({
-  width: "100%",
-  minWidth: "680px",
-});
-
 export const reviewValidationError = style({
   marginTop: vars.space.sm,
   marginBottom: vars.space.md,
