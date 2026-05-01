@@ -1,4 +1,5 @@
 import { style } from "@vanilla-extract/css";
+
 import { vars } from "./theme.css";
 
 export const buttonBase = style({
@@ -70,7 +71,7 @@ export const buttonSecondary = style([
 export const buttonDanger = style([
   buttonBase,
   {
-    background: `linear-gradient(135deg, ${vars.color.error} 0%, #e63946 100%)`,
+    background: `linear-gradient(135deg, ${vars.color.error} 0%, ${vars.color.danger} 100%)`,
     color: vars.color.textPrimary,
     boxShadow: "0 2px 8px rgba(255, 71, 87, 0.24)",
     selectors: {

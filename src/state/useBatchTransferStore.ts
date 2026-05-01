@@ -36,6 +36,7 @@ type BatchTransferState = {
   importSnapshot: (jsonText: string) => void;
   parseCsv: () => void;
   confirmBatch: () => void;
+  clearLocalData: () => Promise<void>;
 };
 
 const initialTransactions: TransactionRecord[] = [
@@ -136,6 +137,15 @@ export const useBatchTransferStore = create<BatchTransferState>()(
           isOpen: false,
           ...initialModalState,
         }));
+      },
+      clearLocalData: async () => {
+        set({
+          transactions: [],
+          snapshotMessage: "Cleared local transaction data.",
+        });
+        await (useBatchTransferStore as unknown as {
+          persist: { clearStorage: () => Promise<void> };
+        }).persist.clearStorage();
       },
     }),
     {

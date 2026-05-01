@@ -9,8 +9,7 @@ globalStyle("*", {
 });
 
 globalStyle("body", {
-  fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Roboto", sans-serif',
+  fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", "Roboto", sans-serif',
   background: `linear-gradient(135deg, ${vars.color.darkBg} 0%, #0f1420 100%)`,
   color: vars.color.textPrimary,
   lineHeight: 1.6,
@@ -35,7 +34,7 @@ globalStyle("h1", {
   backgroundClip: "text",
 });
 
-globalStyle("button", {
+globalStyle("button:not([class])", {
   background: vars.color.primaryBlue,
   color: vars.color.textPrimary,
   border: "none",
@@ -48,13 +47,7 @@ globalStyle("button", {
   boxShadow: "0 2px 8px rgba(0, 102, 255, 0.24)",
 });
 
-globalStyle("button:hover", {
-  background: vars.color.primaryBlueHover,
-  transform: "translateY(-1px)",
-  boxShadow: "0 4px 12px rgba(0, 102, 255, 0.32)",
-});
-
-globalStyle("button:active", {
+globalStyle("button:not([class]):active", {
   transform: "translateY(0)",
 });
 
@@ -70,12 +63,6 @@ globalStyle("button:not([class])", {
   cursor: "pointer",
   transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
   boxShadow: "0 2px 8px rgba(0, 102, 255, 0.24)",
-});
-
-globalStyle("button:not([class]):hover", {
-  background: vars.color.primaryBlueHover,
-  transform: "translateY(-1px)",
-  boxShadow: "0 4px 12px rgba(0, 102, 255, 0.32)",
 });
 
 globalStyle("button:not([class]):active", {

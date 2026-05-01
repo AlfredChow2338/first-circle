@@ -13,6 +13,7 @@ export const vars = createGlobalTheme(":root", {
     textMuted: "#5a6175",
     success: "#00d4aa",
     warning: "#ffb020",
+    danger: "#dc143c",
     error: "#ff4757",
   },
   space: {

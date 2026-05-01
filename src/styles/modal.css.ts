@@ -78,11 +78,6 @@ export const closeButton = style({
   cursor: "pointer",
   fontSize: "20px",
   fontWeight: 700,
-  selectors: {
-    "&:hover": {
-      background: "rgba(255, 255, 255, 0.16)",
-    },
-  },
   padding: vars.space.md,
   "@media": {
     "(max-width: 768px)": {
@@ -169,7 +164,6 @@ export const fileUploadLabel = style({
   selectors: {
     "&:hover": {
       background: "rgba(0, 102, 255, 0.12)",
-      borderColor: vars.color.primaryBlueHover,
       transform: "translateY(-1px)",
     },
     "&:active": {

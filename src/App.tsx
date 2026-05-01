@@ -17,12 +17,14 @@ import type { ChangeEvent } from "react";
 export default function App() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isOfflineReady, setIsOfflineReady] = useState(isOfflineReadyForCurrentPage);
+  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
 
   const openModal = useBatchTransferStore((s) => s.openModal);
   const transactions = useBatchTransferStore((s) => s.transactions);
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
   const snapshotMessage = useBatchTransferStore((s) => s.snapshotMessage);
   const setSnapshotMessage = useBatchTransferStore((s) => s.setSnapshotMessage);
+  const clearLocalData = useBatchTransferStore((s) => s.clearLocalData);
   const importSnapshot = useBatchTransferStore((s) => s.importSnapshot);
 
   useEffect(() => {
@@ -53,6 +55,20 @@ export default function App() {
     setSnapshotMessage("Exported transactions CSV.");
   }
 
+  function handleExportFromMenu() {
+    handleExportTransactions();
+    setIsMoreMenuOpen(false);
+  }
+
+  async function handleClearLocalData() {
+    const confirmed = window.confirm("Clear all locally saved transaction data?");
+    if (!confirmed) {
+      return;
+    }
+    await clearLocalData();
+    setIsMoreMenuOpen(false);
+  }
+
   async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -80,9 +96,37 @@ export default function App() {
       <h1>Batch Transaction Processing System</h1>
       <div className={appClassNames.buttonWrapper}>
         <Button onClick={openModal}>Upload Transaction (.csv)</Button>
-        <Button variant="secondary" onClick={handleExportTransactions}>
-          Export Transactions (.csv)
-        </Button>
+        <div className={appClassNames.moreMenuWrapper}>
+          <Button
+            variant="secondary"
+            aria-label="More actions"
+            aria-haspopup="menu"
+            aria-expanded={isMoreMenuOpen}
+            onClick={() => setIsMoreMenuOpen((open) => !open)}
+          >
+            &#8942;
+          </Button>
+          {isMoreMenuOpen ? (
+            <div role="menu" className={appClassNames.moreMenuPanel}>
+              <Button
+                role="menuitem"
+                variant="secondary"
+                className={appClassNames.moreMenuItemButton}
+                onClick={handleExportFromMenu}
+              >
+                Export Transactions (.csv)
+              </Button>
+              <Button
+                role="menuitem"
+                variant="danger"
+                className={appClassNames.moreMenuItemButton}
+                onClick={() => void handleClearLocalData()}
+              >
+                Clear Local Data
+              </Button>
+            </div>
+          ) : null}
+        </div>
       </div>
       <input
         ref={fileInputRef}

@@ -1,5 +1,5 @@
-import { fireEvent, render, screen } from "@testing-library/react";
-import { beforeEach, describe, expect, it } from "vitest";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { OFFLINE_READY_EVENT } from "src/offline/registerServiceWorker";
 import { resetTransactionsDbForTests } from "src/storage/transactionsIndexedDb";
@@ -9,6 +9,7 @@ import { APPROVERS, useBatchTransferStore } from "./state/useBatchTransferStore"
 
 beforeEach(async () => {
   await resetTransactionsDbForTests();
+  vi.restoreAllMocks();
   class MockFileReader {
     public result: string | ArrayBuffer | null = null;
     public onload: null | (() => void) = null;
@@ -123,7 +124,7 @@ describe("App flow", () => {
     fireEvent.click(screen.getByText("Next"));
     expect(await screen.findByText("Step 2 of 3")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Next"));
-    fireEvent.click(screen.getByText("Confirm"));
+    fireEvent.click(screen.getByText("Confirm Transfer"));
     expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(initial);
   });
 
@@ -156,5 +157,41 @@ describe("App flow", () => {
     window.dispatchEvent(new Event(OFFLINE_READY_EVENT));
 
     expect(await screen.findByText("Offline mode ready.")).toBeInTheDocument();
+  });
+
+  it("opens More menu and exports transactions from menu action", () => {
+    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+    const revokeSpy = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
+    const createObjectUrlSpy = vi
+      .spyOn(URL, "createObjectURL")
+      .mockReturnValue("blob://transactions-export");
+
+    render(<App />);
+
+    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    expect(screen.getByRole("menuitem", { name: "Export Transactions (.csv)" })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: "Clear Local Data" })).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("menuitem", { name: "Export Transactions (.csv)" }));
+
+    expect(clickSpy).toHaveBeenCalled();
+    expect(createObjectUrlSpy).toHaveBeenCalled();
+    expect(revokeSpy).toHaveBeenCalledWith("blob://transactions-export");
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+  });
+
+  it("clears local data from More menu after confirmation", async () => {
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    render(<App />);
+    expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(0);
+
+    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Clear Local Data" }));
+
+    await waitFor(() => {
+      expect(useBatchTransferStore.getState().transactions).toEqual([]);
+    });
+    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+    expect(screen.getByText("Cleared local transaction data.")).toBeInTheDocument();
   });
 });

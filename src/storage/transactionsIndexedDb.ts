@@ -56,6 +56,11 @@ export async function deletePersistEnvelope(name: string): Promise<void> {
   await db.delete(PERSIST_STORE_NAME, name);
 }
 
+export async function clearAllPersistEnvelopes(): Promise<void> {
+  const db = await openTransactionsDb();
+  await db.clear(PERSIST_STORE_NAME);
+}
+
 /** Clears the singleton and deletes the DB (for tests and hard resets). */
 export async function resetTransactionsDbForTests(): Promise<void> {
   const activeDbPromise = dbPromise;

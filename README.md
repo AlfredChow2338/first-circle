@@ -24,6 +24,13 @@
 - Each row must contain exactly 4 columns; malformed rows are rejected before Step 2.
 - Invalid file type or malformed structure shows inline validation error and blocks progression.
 
+### Home Actions
+
+- Home page uses a `More` menu for secondary data actions:
+  - `Export Transactions (.csv)` downloads current table rows in CSV format.
+  - `Clear Local Data` removes all persisted IndexedDB transaction data after confirmation.
+- Clearing local data also resets in-memory transaction state so the table updates immediately.
+
 ### Offline Support
 
 - The app registers a service worker in production builds and precaches app-shell assets.

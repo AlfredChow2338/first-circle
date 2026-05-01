@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it } from "vitest";
 
 import type { TransactionRecord } from "src/domain/types";
 import {
+  readPersistEnvelope,
   resetTransactionsDbForTests,
   writePersistEnvelope,
 } from "src/storage/transactionsIndexedDb";
@@ -105,5 +106,28 @@ describe("useBatchTransferStore snapshot persistence", () => {
 
     expect(useBatchTransferStore.getState().transactions).toEqual(persistedTransactions);
     expect(useBatchTransferStore.getState().hasHydrated).toBe(true);
+  });
+
+  it("clears local data from memory and IndexedDB", async () => {
+    const persistedTransactions: TransactionRecord[] = [
+      {
+        transactionDate: "2025-04-03",
+        accountNumber: "000-777888999-05",
+        accountHolderName: "Jordan Lee",
+        amount: 10,
+        status: "Pending",
+      },
+    ];
+    await writePersistEnvelope("batch-transactions-v1", {
+      state: { transactions: persistedTransactions },
+      version: 0,
+    });
+    useBatchTransferStore.setState({ transactions: persistedTransactions, snapshotMessage: null });
+
+    await useBatchTransferStore.getState().clearLocalData();
+
+    expect(useBatchTransferStore.getState().transactions).toEqual([]);
+    expect(useBatchTransferStore.getState().snapshotMessage).toBe("Cleared local transaction data.");
+    await expect(readPersistEnvelope("batch-transactions-v1")).resolves.toBeNull();
   });
 });
