@@ -11,6 +11,8 @@ type BatchTransferState = {
   step: Step;
   batchName: string;
   approver: string;
+  selectedFileName: string;
+  uploadError: string | null;
   csvContent: string;
   parsedRows: ParsedCsvRow[];
   transactions: TransactionRecord[];
@@ -20,6 +22,8 @@ type BatchTransferState = {
   prevStep: () => void;
   setBatchName: (value: string) => void;
   setApprover: (value: string) => void;
+  setSelectedFileName: (value: string) => void;
+  setUploadError: (value: string | null) => void;
   setCsvContent: (value: string) => void;
   parseCsv: () => void;
   confirmBatch: () => void;
@@ -57,6 +61,8 @@ export const useBatchTransferStore = create<BatchTransferState>((set, get) => ({
   step: 1,
   batchName: "",
   approver: APPROVERS[0],
+  selectedFileName: "",
+  uploadError: null,
   csvContent: "",
   parsedRows: [],
   transactions: initialTransactions,
@@ -66,10 +72,12 @@ export const useBatchTransferStore = create<BatchTransferState>((set, get) => ({
   prevStep: () => set((state) => ({ step: Math.max(1, state.step - 1) as Step })),
   setBatchName: (value) => set({ batchName: value }),
   setApprover: (value) => set({ approver: value }),
+  setSelectedFileName: (value) => set({ selectedFileName: value }),
+  setUploadError: (value) => set({ uploadError: value }),
   setCsvContent: (value) => set({ csvContent: value }),
   parseCsv: () => {
     const parsedRows = parseCsvText(get().csvContent);
-    set({ parsedRows });
+    set({ parsedRows, uploadError: null });
   },
   confirmBatch: () => {
     const { parsedRows } = get();

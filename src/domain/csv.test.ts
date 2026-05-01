@@ -23,6 +23,13 @@ describe("parseCsvText", () => {
     ).toThrow("CSV header does not match expected schema");
   });
 
+  it("throws for uneven column counts", () => {
+    expect(() =>
+      parseCsvText(`Transaction Date,Account Number,Account Holder Name,Amount
+2025-02-20,000-123456789-01,John Doe`),
+    ).toThrow("CSV row 2 has invalid column count; expected 4");
+  });
+
   it("captures validation errors from sample invalid rows", () => {
     const rows = parseCsvText(`Transaction Date,Account Number,Account Holder Name,Amount
 2025-02-20,000-123456789-01,John Doe,100.00

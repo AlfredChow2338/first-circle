@@ -8,6 +8,15 @@
 - Computed summary metrics
 - Adding uploaded transactions into the home-page table without backend integration
 
+### CSV Upload Rules
+
+- Step 1 uses file upload only (no freeform CSV textarea input).
+- Only `.csv` files are accepted.
+- CSV must use exact header order:
+  - `Transaction Date,Account Number,Account Holder Name,Amount`
+- Each row must contain exactly 4 columns; malformed rows are rejected before Step 2.
+- Invalid file type or malformed structure shows inline validation error and blocks progression.
+
 ### Goals
 
 - Deliver a complete three-step modal transfer workflow with bidirectional step navigation and no state loss.
@@ -37,9 +46,9 @@
 - Reat Testing Library (RTL)
 
 - vanilla-extract/css
-  ✅ Type-safe - ClassNames are typed and autocompleted
-  ✅ Scoped - No CSS conflicts or naming collisions  
-  ✅ Tree-shakeable - Unused styles are removed from production
+  - ✅ Type-safe - ClassNames are typed and autocompleted
+  - ✅ Scoped - No CSS conflicts or naming collisions
+  - ✅ Tree-shakeable - Unused styles are removed from production
 
 - Package manager: Pnpm 10
 

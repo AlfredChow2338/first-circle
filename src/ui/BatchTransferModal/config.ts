@@ -5,4 +5,6 @@ export const batchTransferModalClassNames = {
   overlay: modalStyles.modalOverlay,
   stepIndicator: modalStyles.stepIndicator,
   summaryItem: modalStyles.summaryItem,
+  uploadMeta: modalStyles.uploadMeta,
+  uploadError: modalStyles.uploadError,
 };

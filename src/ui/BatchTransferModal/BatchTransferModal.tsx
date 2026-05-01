@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 
+
 import { summarizeRows } from "src/domain/summary";
 import {
   APPROVERS,
@@ -9,12 +10,16 @@ import {
 
 import { batchTransferModalClassNames } from "./config";
 
+import type { ChangeEvent } from "react";
+
 export function BatchTransferModal() {
   const {
     isOpen,
     step,
     batchName,
     approver,
+    selectedFileName,
+    uploadError,
     csvContent,
     parsedRows,
     closeModal,
@@ -22,12 +27,74 @@ export function BatchTransferModal() {
     nextStep,
     setBatchName,
     setApprover,
+    setSelectedFileName,
+    setUploadError,
     setCsvContent,
     parseCsv,
     confirmBatch,
   } = useBatchTransferStore();
 
   const summary = useMemo(() => summarizeRows(parsedRows), [parsedRows]);
+
+  function readFileAsText(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(String(reader.result ?? ""));
+      reader.onerror = () => reject(new Error("Unable to read uploaded file"));
+      reader.readAsText(file);
+    });
+  }
+
+  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setUploadError(null);
+
+    const fileName = file.name.toLowerCase();
+    const isCsvByExt = fileName.endsWith(".csv");
+    const allowedMime = new Set(["text/csv", "application/vnd.ms-excel", ""]);
+    const isCsvByMime = allowedMime.has(file.type);
+
+    if (!isCsvByExt && !isCsvByMime) {
+      setSelectedFileName("");
+      setCsvContent("");
+      setUploadError("Please upload a valid .csv file.");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      const text = await readFileAsText(file);
+      if (!text.trim()) {
+        setSelectedFileName("");
+        setCsvContent("");
+        setUploadError("CSV file is empty. Please upload a file with valid records.");
+        return;
+      }
+      setSelectedFileName(file.name);
+      setCsvContent(text);
+    } catch {
+      setSelectedFileName("");
+      setCsvContent("");
+      setUploadError("Unable to read the uploaded CSV file. Please try again.");
+    }
+  }
+
+  function handleNextFromStepOne() {
+    if (!selectedFileName || !csvContent.trim()) {
+      setUploadError("Please upload a CSV file before continuing.");
+      return;
+    }
+
+    try {
+      parseCsv();
+      setUploadError(null);
+      nextStep();
+    } catch (error) {
+      setUploadError(error instanceof Error ? error.message : "Invalid CSV format.");
+    }
+  }
 
   return (
     <Dialog.Root
@@ -53,13 +120,26 @@ export function BatchTransferModal() {
                 />
               </label>
               <label>
-                CSV Content
-                <textarea
-                  aria-label="CSV Content"
-                  value={csvContent}
-                  onChange={(e) => setCsvContent(e.target.value)}
+                CSV File Upload
+                <input
+                  aria-label="CSV File Upload"
+                  type="file"
+                  accept=".csv,text/csv"
+                  onChange={(event) => {
+                    void handleFileChange(event);
+                  }}
                 />
               </label>
+              {selectedFileName ? (
+                <div className={batchTransferModalClassNames.uploadMeta}>
+                  Selected file: {selectedFileName}
+                </div>
+              ) : null}
+              {uploadError ? (
+                <div role="alert" className={batchTransferModalClassNames.uploadError}>
+                  {uploadError}
+                </div>
+              ) : null}
               <label>
                 Approver Selection
                 <select
@@ -74,12 +154,7 @@ export function BatchTransferModal() {
                   ))}
                 </select>
               </label>
-              <button
-                onClick={() => {
-                  parseCsv();
-                  nextStep();
-                }}
-              >
+              <button onClick={handleNextFromStepOne}>
                 Next
               </button>
             </section>

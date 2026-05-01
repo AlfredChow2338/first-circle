@@ -1,4 +1,5 @@
 import Papa from "papaparse";
+import { z } from "zod";
 
 import { validateRow } from "./validation";
 
@@ -10,6 +11,13 @@ const EXPECTED_HEADERS = [
   "Account Holder Name",
   "Amount",
 ] as const;
+
+const HeaderSchema = z.tuple([
+  z.literal(EXPECTED_HEADERS[0]),
+  z.literal(EXPECTED_HEADERS[1]),
+  z.literal(EXPECTED_HEADERS[2]),
+  z.literal(EXPECTED_HEADERS[3]),
+]);
 
 export function parseCsvText(csvText: string): ParsedCsvRow[] {
   const parsed = Papa.parse<string[]>(csvText.trim(), {
@@ -26,12 +34,15 @@ export function parseCsvText(csvText: string): ParsedCsvRow[] {
   }
 
   const header = rows[0].map((cell) => cell.trim());
-  const headerMatches = EXPECTED_HEADERS.every((expected, index) => header[index] === expected);
-  if (!headerMatches) {
+  const headerValidation = HeaderSchema.safeParse(header);
+  if (!headerValidation.success || header.length !== EXPECTED_HEADERS.length) {
     throw new Error("CSV header does not match expected schema");
   }
 
   return rows.slice(1).map((row, index) => {
+    if (row.length !== EXPECTED_HEADERS.length) {
+      throw new Error(`CSV row ${index + 2} has invalid column count; expected 4`);
+    }
     const transactionDate = (row[0] ?? "").trim();
     const accountNumber = (row[1] ?? "").trim();
     const accountHolderName = (row[2] ?? "").trim();

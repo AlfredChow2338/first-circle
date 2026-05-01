@@ -65,3 +65,18 @@ export const summaryItem = style({
   marginBottom: vars.space.md,
   borderLeft: `3px solid ${vars.color.primaryBlue}`,
 });
+
+export const uploadMeta = style({
+  marginTop: vars.space.sm,
+  marginBottom: vars.space.md,
+  fontSize: "13px",
+  color: vars.color.textSecondary,
+});
+
+export const uploadError = style({
+  marginTop: vars.space.sm,
+  marginBottom: vars.space.md,
+  color: "#ff6b6b",
+  fontSize: "13px",
+  fontWeight: 500,
+});
