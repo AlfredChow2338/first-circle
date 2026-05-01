@@ -1,6 +1,20 @@
-import { beforeEach, describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { TransactionRecord } from "src/components/TransactionTable/types";
+
+vi.mock("src/utils/web-worker/runBatchConfirmComputation", () => ({
+  runBatchConfirmComputation: vi.fn(async () => ({
+    transactions: [
+      {
+        transactionDate: "2025-06-01",
+        accountNumber: "000-100200300-01",
+        accountHolderName: "Pat Lee",
+        amount: 10,
+        status: "Pending" as const,
+      },
+    ],
+  })),
+}));
 import {
   readPersistEnvelope,
   resetTransactionsDbForTests,
@@ -104,5 +118,35 @@ describe("useBatchTransferStore snapshot persistence", () => {
     expect(useBatchTransferStore.getState().transactions).toEqual([]);
     expect(useBatchTransferStore.getState().snapshotMessage).toBeNull();
     await expect(readPersistEnvelope("batch-transactions-v1")).resolves.toBeNull();
+  });
+});
+
+describe("confirmBatch", () => {
+  beforeEach(async () => {
+    await resetTransactionsDbForTests();
+    useBatchTransferStore.setState({
+      isOpen: true,
+      step: 3,
+      parsedRows: [],
+      batchName: "June payout",
+      approver: "Alex Approver",
+      transactions: [],
+      hasHydrated: true,
+      csvContent: "",
+      selectedFileName: "",
+      uploadError: null,
+      snapshotMessage: null,
+    });
+  });
+
+  it("stores batch name and approver on each appended transaction", async () => {
+    await useBatchTransferStore.getState().confirmBatch();
+    const rows = useBatchTransferStore.getState().transactions;
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      batchName: "June payout",
+      approver: "Alex Approver",
+      transactionDate: "2025-06-01",
+    });
   });
 });

@@ -6,10 +6,21 @@ import * as modalStyles from "src/styles/modal.css";
 
 type TransactionDetailModalProps = {
   transaction: TransactionRecord | null;
+  /** Fallback when `transaction` has no persisted batch fields (e.g. legacy data). */
+  batchName: string;
+  approver: string;
   onOpenChange: (open: boolean) => void;
 };
 
-export function TransactionDetailModal({ transaction, onOpenChange }: TransactionDetailModalProps) {
+export function TransactionDetailModal({
+  transaction,
+  batchName,
+  approver,
+  onOpenChange,
+}: TransactionDetailModalProps) {
+  const displayBatchName = (transaction?.batchName ?? batchName).trim() || "—";
+  const displayApprover = (transaction?.approver ?? approver).trim() || "—";
+
   return (
     <Dialog.Root open={transaction !== null} onOpenChange={onOpenChange}>
       <Dialog.Portal>
@@ -24,6 +35,12 @@ export function TransactionDetailModal({ transaction, onOpenChange }: Transactio
           <Dialog.Description>Review transaction information for this row.</Dialog.Description>
           {transaction ? (
             <section>
+              <p>
+                <strong>Batch transfer name:</strong> {displayBatchName}
+              </p>
+              <p>
+                <strong>Approver:</strong> {displayApprover}
+              </p>
               <p>
                 <strong>Transaction Date:</strong> {transaction.transactionDate}
               </p>

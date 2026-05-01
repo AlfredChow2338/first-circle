@@ -42,10 +42,15 @@ export const useBatchTransferStore = create<BatchTransferState>()(
         set({ parsedRows, uploadError: null });
       },
       confirmBatch: async () => {
-        const { parsedRows } = get();
+        const { parsedRows, batchName, approver } = get();
         const { transactions: newTransactions } = await runBatchConfirmComputation(parsedRows);
+        const tagged = newTransactions.map((transaction) => ({
+          ...transaction,
+          batchName,
+          approver,
+        }));
         set((state) => ({
-          transactions: [...state.transactions, ...newTransactions],
+          transactions: [...state.transactions, ...tagged],
           isOpen: false,
           ...initialModalState,
         }));

@@ -24,6 +24,8 @@ function AppContent() {
   const openModal = useBatchTransferStore((s) => s.openModal);
   const isBatchModalOpen = useBatchTransferStore((s) => s.isOpen);
   const transactions = useBatchTransferStore((s) => s.transactions);
+  const batchName = useBatchTransferStore((s) => s.batchName);
+  const approver = useBatchTransferStore((s) => s.approver);
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
   const clearLocalData = useBatchTransferStore((s) => s.clearLocalData);
   const settleTransaction = useBatchTransferStore((s) => s.settleTransaction);
@@ -99,6 +101,8 @@ function AppContent() {
         <Suspense fallback={null}>
           <TransactionDetailModal
             transaction={selectedTransaction}
+            batchName={batchName}
+            approver={approver}
             onOpenChange={handleTransactionDetailModalOpenChange}
           />
         </Suspense>
