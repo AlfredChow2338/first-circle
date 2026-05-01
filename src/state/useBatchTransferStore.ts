@@ -111,7 +111,6 @@ export const useBatchTransferStore = create<BatchTransferState>()(
         const snapshot = parseSnapshot(jsonText);
         set({
           transactions: snapshot.transactions,
-          snapshotMessage: `Imported ${snapshot.transactions.length} transaction(s) successfully.`,
         });
       },
       parseCsv: () => {
@@ -141,11 +140,12 @@ export const useBatchTransferStore = create<BatchTransferState>()(
       clearLocalData: async () => {
         set({
           transactions: [],
-          snapshotMessage: "Cleared local transaction data.",
         });
-        await (useBatchTransferStore as unknown as {
-          persist: { clearStorage: () => Promise<void> };
-        }).persist.clearStorage();
+        await (
+          useBatchTransferStore as unknown as {
+            persist: { clearStorage: () => Promise<void> };
+          }
+        ).persist.clearStorage();
       },
     }),
     {

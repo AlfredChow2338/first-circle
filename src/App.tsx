@@ -8,22 +8,22 @@ import {
 import { useBatchTransferStore } from "src/state/useBatchTransferStore";
 import { BatchTransferModal } from "src/ui/BatchTransferModal";
 import { Button } from "src/ui/shared/Button";
+import { MessageProvider, useMessage } from "src/ui/shared/message/MessageProvider";
 import { TransactionTable } from "src/ui/TransactionTable";
 
 import { appClassNames } from "./ui/config";
 
 import type { ChangeEvent } from "react";
 
-export default function App() {
+function AppContent() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isOfflineReady, setIsOfflineReady] = useState(isOfflineReadyForCurrentPage);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
+  const message = useMessage();
 
   const openModal = useBatchTransferStore((s) => s.openModal);
   const transactions = useBatchTransferStore((s) => s.transactions);
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
-  const snapshotMessage = useBatchTransferStore((s) => s.snapshotMessage);
-  const setSnapshotMessage = useBatchTransferStore((s) => s.setSnapshotMessage);
   const clearLocalData = useBatchTransferStore((s) => s.clearLocalData);
   const importSnapshot = useBatchTransferStore((s) => s.importSnapshot);
 
@@ -52,7 +52,7 @@ export default function App() {
     anchor.download = `transactions-v1-${timestamp}.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
-    setSnapshotMessage("Exported transactions CSV.");
+    message.success("Exported transactions CSV.");
   }
 
   function handleExportFromMenu() {
@@ -66,6 +66,7 @@ export default function App() {
       return;
     }
     await clearLocalData();
+    message.success("Cleared local transaction data.");
     setIsMoreMenuOpen(false);
   }
 
@@ -76,7 +77,7 @@ export default function App() {
     const validJsonType =
       file.type === "application/json" || file.name.toLowerCase().endsWith(".json");
     if (!validJsonType) {
-      setSnapshotMessage("Please select a valid JSON snapshot file.");
+      message.error("Please select a valid JSON snapshot file.");
       event.target.value = "";
       return;
     }
@@ -84,8 +85,9 @@ export default function App() {
     try {
       const text = await file.text();
       importSnapshot(text);
+      message.success("Imported transactions snapshot.");
     } catch (error) {
-      setSnapshotMessage(error instanceof Error ? error.message : "Unable to import snapshot.");
+      message.error(error instanceof Error ? error.message : "Unable to import snapshot.");
     } finally {
       event.target.value = "";
     }
@@ -138,7 +140,6 @@ export default function App() {
           void handleImportFile(event);
         }}
       />
-      {snapshotMessage ? <p role="status">{snapshotMessage}</p> : null}
       <p className={appClassNames.offlineStatus} role="status">
         {isOfflineReady ? "Offline mode ready." : "Offline mode not ready yet."}
       </p>
@@ -146,5 +147,13 @@ export default function App() {
       <TransactionTable transactions={transactions} />
       <BatchTransferModal />
     </main>
+  );
+}
+
+export default function App() {
+  return (
+    <MessageProvider>
+      <AppContent />
+    </MessageProvider>
   );
 }

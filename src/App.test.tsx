@@ -168,7 +168,7 @@ describe("App flow", () => {
 
     render(<App />);
 
-    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    fireEvent.click(screen.getByRole("button", { name: "More actions" }));
     expect(screen.getByRole("menuitem", { name: "Export Transactions (.csv)" })).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Clear Local Data" })).toBeInTheDocument();
 
@@ -185,7 +185,7 @@ describe("App flow", () => {
     render(<App />);
     expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(0);
 
-    fireEvent.click(screen.getByRole("button", { name: "More" }));
+    fireEvent.click(screen.getByRole("button", { name: "More actions" }));
     fireEvent.click(screen.getByRole("menuitem", { name: "Clear Local Data" }));
 
     await waitFor(() => {
@@ -193,5 +193,16 @@ describe("App flow", () => {
     });
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
     expect(screen.getByText("Cleared local transaction data.")).toBeInTheDocument();
+  });
+
+  it("shows import error via shared message", async () => {
+    render(<App />);
+    const invalidFile = new File(["{}"], "invalid.txt", { type: "text/plain" });
+
+    fireEvent.change(screen.getByLabelText("Import Transactions File"), {
+      target: { files: [invalidFile] },
+    });
+
+    expect(await screen.findByText("Please select a valid JSON snapshot file.")).toBeInTheDocument();
   });
 });

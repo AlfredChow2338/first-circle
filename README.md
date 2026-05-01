@@ -30,6 +30,7 @@
   - `Export Transactions (.csv)` downloads current table rows in CSV format.
   - `Clear Local Data` removes all persisted IndexedDB transaction data after confirmation.
 - Clearing local data also resets in-memory transaction state so the table updates immediately.
+- Action feedback (export/import/clear) is shown through shared transient messages (antd-message style) with success/error variants.
 
 ### Offline Support
 

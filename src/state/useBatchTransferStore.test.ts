@@ -127,7 +127,7 @@ describe("useBatchTransferStore snapshot persistence", () => {
     await useBatchTransferStore.getState().clearLocalData();
 
     expect(useBatchTransferStore.getState().transactions).toEqual([]);
-    expect(useBatchTransferStore.getState().snapshotMessage).toBe("Cleared local transaction data.");
+    expect(useBatchTransferStore.getState().snapshotMessage).toBeNull();
     await expect(readPersistEnvelope("batch-transactions-v1")).resolves.toBeNull();
   });
 });

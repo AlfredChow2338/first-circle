@@ -5,6 +5,7 @@ import { summarizeRows } from "src/domain/summary";
 import type { ParsedCsvRow } from "src/domain/types";
 import { APPROVERS, useBatchTransferStore } from "src/state/useBatchTransferStore";
 import { Button } from "src/ui/shared/Button";
+import { useMessage } from "src/ui/shared/message/MessageProvider";
 import { Table, type TableColumn } from "src/ui/shared/Table";
 
 import { batchTransferModalClassNames } from "./config";
@@ -12,6 +13,7 @@ import { batchTransferModalClassNames } from "./config";
 import type { ChangeEvent } from "react";
 
 export function BatchTransferModal() {
+  const message = useMessage();
   const {
     isOpen,
     step,
@@ -107,6 +109,11 @@ export function BatchTransferModal() {
     } catch (error) {
       setUploadError(error instanceof Error ? error.message : "Invalid CSV format.");
     }
+  }
+
+  function handleConfirmBatch() {
+    confirmBatch();
+    message.success("Batch transfer confirmed.");
   }
 
   return (
@@ -223,7 +230,7 @@ export function BatchTransferModal() {
               <Button variant="secondary" onClick={prevStep}>
                 Back
               </Button>
-              <Button variant="success" onClick={confirmBatch}>
+              <Button variant="success" onClick={handleConfirmBatch}>
                 Confirm Transfer
               </Button>
             </section>
