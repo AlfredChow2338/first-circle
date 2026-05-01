@@ -1,23 +1,15 @@
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
-import {
-  OFFLINE_READY_EVENT,
-  isOfflineReadyForCurrentPage,
-} from "src/utils/service-worker/registerServiceWorker";
-import { useBatchTransferStore } from "src/state/useBatchTransferStore";
-import { BatchTransferModal } from "src/ui/BatchTransferModal";
-import { Button } from "src/ui/shared/Button";
-import { MessageProvider, useMessage } from "src/ui/shared/message/MessageProvider";
-import { TransactionTable } from "src/ui/TransactionTable";
+import { useBatchTransferStore } from "src/store/useBatchTransferStore";
+import { BatchTransferModal } from "src/components/BatchTransferModal";
+import { Button } from "src/components/shared/Button";
+import { MessageProvider, useMessage } from "src/components/shared/message/MessageProvider";
+import { TransactionTable } from "src/components/TransactionTable";
 import { handleExportTransactions } from "src/utils/csv";
 
-import { appClassNames } from "./ui/config";
-
-import type { ChangeEvent } from "react";
+import { appClassNames } from "./components/config";
 
 function AppContent() {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const [isOfflineReady, setIsOfflineReady] = useState(isOfflineReadyForCurrentPage);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
   const message = useMessage();
 
@@ -25,15 +17,6 @@ function AppContent() {
   const transactions = useBatchTransferStore((s) => s.transactions);
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
   const clearLocalData = useBatchTransferStore((s) => s.clearLocalData);
-  const importSnapshot = useBatchTransferStore((s) => s.importSnapshot);
-
-  useEffect(() => {
-    const onOfflineReady = () => setIsOfflineReady(true);
-    window.addEventListener(OFFLINE_READY_EVENT, onOfflineReady);
-    return () => {
-      window.removeEventListener(OFFLINE_READY_EVENT, onOfflineReady);
-    };
-  }, []);
 
   function handleExportFromMenu() {
     handleExportTransactions(transactions);
@@ -49,29 +32,6 @@ function AppContent() {
     await clearLocalData();
     message.success("Cleared local transaction data.");
     setIsMoreMenuOpen(false);
-  }
-
-  async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const validJsonType =
-      file.type === "application/json" || file.name.toLowerCase().endsWith(".json");
-    if (!validJsonType) {
-      message.error("Please select a valid JSON snapshot file.");
-      event.target.value = "";
-      return;
-    }
-
-    try {
-      const text = await file.text();
-      importSnapshot(text);
-      message.success("Imported transactions snapshot.");
-    } catch (error) {
-      message.error(error instanceof Error ? error.message : "Unable to import snapshot.");
-    } finally {
-      event.target.value = "";
-    }
   }
 
   return (
@@ -111,19 +71,6 @@ function AppContent() {
           ) : null}
         </div>
       </div>
-      <input
-        ref={fileInputRef}
-        type="file"
-        accept=".json,application/json"
-        aria-label="Import Transactions File"
-        style={{ display: "none" }}
-        onChange={(event) => {
-          void handleImportFile(event);
-        }}
-      />
-      <p className={appClassNames.offlineStatus} role="status">
-        {isOfflineReady ? "Offline mode ready." : "Offline mode not ready yet."}
-      </p>
       {!hasHydrated ? <p>Loading persisted transactions...</p> : null}
       <TransactionTable transactions={transactions} />
       <BatchTransferModal />

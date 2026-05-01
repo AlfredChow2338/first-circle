@@ -1,12 +1,12 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 
+import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
 import { summarizeRows } from "src/utils/summary";
 import type { ParsedCsvRow } from "src/utils/csv/types";
-import { APPROVERS, useBatchTransferStore } from "src/state/useBatchTransferStore";
-import { Button } from "src/ui/shared/Button";
-import { useMessage } from "src/ui/shared/message/MessageProvider";
-import { Table, type TableColumn } from "src/ui/shared/Table";
+import { Button } from "src/components/shared/Button";
+import { useMessage } from "src/components/shared/message/MessageProvider";
+import { Table, type TableColumn } from "src/components/shared/Table";
 
 import { batchTransferModalClassNames } from "./config";
 

@@ -4,7 +4,7 @@ import { z } from "zod";
 import { validateRow } from "../validation";
 
 import type { ParsedCsvRow } from "./types";
-import { TransactionRecord } from "src/ui/TransactionTable/types";
+import { TransactionRecord } from "src/components/TransactionTable/types";
 
 const EXPECTED_HEADERS = [
   "Transaction Date",

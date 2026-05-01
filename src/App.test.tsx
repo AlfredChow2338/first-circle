@@ -2,10 +2,10 @@ import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import { OFFLINE_READY_EVENT } from "src/utils/service-worker/registerServiceWorker";
-import { resetTransactionsDbForTests } from "src/storage/transactionsIndexedDb";
+import { resetTransactionsDbForTests } from "src/utils/storage/transactionsIndexedDb";
 
 import App from "./App";
-import { APPROVERS, useBatchTransferStore } from "./state/useBatchTransferStore";
+import { APPROVERS, useBatchTransferStore } from "./store/useBatchTransferStore";
 
 beforeEach(async () => {
   await resetTransactionsDbForTests();

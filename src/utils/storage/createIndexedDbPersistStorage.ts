@@ -3,10 +3,9 @@ import {
   readPersistEnvelope,
   writePersistEnvelope,
   type PersistedTransactionsSlice,
-} from "src/storage/transactionsIndexedDb";
+} from "src/utils/storage/transactionsIndexedDb";
 
 import type { PersistStorage } from "zustand/middleware";
-
 
 type PersistedSlice = PersistedTransactionsSlice;
 

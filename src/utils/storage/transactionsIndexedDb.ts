@@ -1,6 +1,6 @@
 import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from "idb";
 
-import type { TransactionRecord } from "src/ui/TransactionTable/types";
+import type { TransactionRecord } from "src/components/TransactionTable/types";
 
 import type { StorageValue } from "zustand/middleware";
 
@@ -69,14 +69,10 @@ export async function resetTransactionsDbForTests(): Promise<void> {
     try {
       const db = await activeDbPromise;
       db.close();
-    } catch {
-      // ignore close errors; best-effort teardown
-    }
+    } catch {}
   }
 
   try {
     await deleteDB(PERSIST_DB_NAME);
-  } catch {
-    // ignore teardown errors in constrained environments
-  }
+  } catch (error) {}
 }

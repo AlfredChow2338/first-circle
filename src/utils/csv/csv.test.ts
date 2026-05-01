@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { parseCsvText } from "../utils/csv/csv";
+import { parseCsvText } from "./csv";
 
 describe("parseCsvText", () => {
   it("parses rows with expected header contract", () => {

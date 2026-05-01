@@ -1,8 +1,8 @@
 import { useState } from "react";
 
 import * as tableStyles from "src/styles/table.css";
-import { Button } from "src/ui/shared/Button";
-import { Table, type TableColumn } from "src/ui/shared/Table";
+import { Button } from "src/components/shared/Button";
+import { Table, type TableColumn } from "src/components/shared/Table";
 
 import { STATUS_META } from "./config";
 import type { TransactionRecord } from "./types";
