@@ -1,7 +1,7 @@
 import { lazy, Suspense } from "react";
 
 import { Button } from "src/components/shared/Button";
-import { MessageProvider } from "src/components/shared/Message/MessageProvider";
+import { MessageProvider } from "src/components/shared/message/MessageProvider";
 import { TransactionTable } from "src/components/TransactionTable";
 import { useMoreMenuActions } from "src/hooks/useMoreMenuActions";
 import { useTransactionActions } from "src/hooks/useTransactionActions";

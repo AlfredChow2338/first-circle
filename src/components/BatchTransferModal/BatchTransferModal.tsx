@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo, useState } from "react";
 
 import { Button } from "src/components/shared/Button";
-import { useMessage } from "src/components/shared/Message/MessageProvider";
+import { useMessage } from "src/components/shared/message/MessageProvider";
 import { Stepper } from "src/components/shared/Stepper";
 import { Table, type TableColumn } from "src/components/shared/Table";
 import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
