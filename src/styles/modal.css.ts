@@ -38,12 +38,30 @@ export const modalContent = style({
   border: `1px solid ${vars.color.cardBorder}`,
   borderRadius: vars.borderRadius.lg,
   boxShadow: vars.shadow.lg,
-  padding: vars.space.xxxl,
+  padding: vars.space.lg,
   maxWidth: "800px",
   maxHeight: "85vh",
   width: "90vw",
   overflowY: "auto",
   animation: `${slideIn} 0.3s cubic-bezier(0.4, 0, 0.2, 1)`,
+  "@media": {
+    "(max-width: 767px)": {
+      top: 0,
+      left: 0,
+      transform: "none",
+      width: "100vw",
+      maxWidth: "100vw",
+      height: "100vh",
+      maxHeight: "100vh",
+      borderRadius: 0,
+    },
+  },
+});
+
+export const modalContentStepTwo = style({
+  width: "90vw",
+  maxWidth: "90vw",
+  borderRadius: vars.borderRadius.lg,
 });
 
 export const closeButton = style({
@@ -66,6 +84,11 @@ export const closeButton = style({
     },
   },
   padding: vars.space.md,
+  "@media": {
+    "(max-width: 768px)": {
+      width: "36px",
+    },
+  },
 });
 
 export const stepIndicator = style({
@@ -76,7 +99,8 @@ export const stepIndicator = style({
   borderRadius: vars.borderRadius.xl,
   fontSize: "12px",
   fontWeight: 600,
-  marginBottom: vars.space.xxl,
+  marginTop: vars.space.xl,
+  marginBottom: vars.space.xl,
   border: "1px solid rgba(0, 102, 255, 0.2)",
 });
 
@@ -101,4 +125,72 @@ export const uploadError = style({
   color: "#ff6b6b",
   fontSize: "13px",
   fontWeight: 500,
+});
+
+export const reviewTableWrapper = style({
+  width: "100%",
+  overflowX: "auto",
+  WebkitOverflowScrolling: "touch",
+  marginBottom: vars.space.md,
+});
+
+export const reviewTable = style({
+  width: "100%",
+  minWidth: "680px",
+});
+
+export const reviewValidationError = style({
+  marginTop: vars.space.sm,
+  marginBottom: vars.space.md,
+  color: "#ff6b6b",
+  fontSize: "13px",
+  fontWeight: 600,
+});
+
+export const fileUploadWrapper = style({
+  position: "relative",
+  display: "inline-block",
+  width: "100%",
+});
+
+export const fileUploadInput = style({
+  position: "absolute",
+  width: "0.1px",
+  height: "0.1px",
+  opacity: 0,
+  overflow: "hidden",
+  zIndex: -1,
+});
+
+export const fileUploadLabel = style({
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  gap: vars.space.md,
+  width: "100%",
+  padding: `${vars.space.lg} ${vars.space.xxl}`,
+  marginTop: vars.space.sm,
+  background: "rgba(0, 102, 255, 0.08)",
+  border: `2px dashed ${vars.color.primaryBlue}`,
+  borderRadius: vars.borderRadius.md,
+  color: vars.color.primaryBlue,
+  fontSize: "14px",
+  fontWeight: 600,
+  cursor: "pointer",
+  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+  selectors: {
+    "&:hover": {
+      background: "rgba(0, 102, 255, 0.12)",
+      borderColor: vars.color.primaryBlueHover,
+      transform: "translateY(-1px)",
+    },
+    "&:active": {
+      transform: "translateY(0)",
+    },
+  },
+});
+
+export const fileUploadIcon = style({
+  fontSize: "20px",
+  lineHeight: 1,
 });

@@ -31,6 +31,10 @@ export function BatchTransferModal() {
   } = useBatchTransferStore();
 
   const summary = useMemo(() => summarizeRows(parsedRows), [parsedRows]);
+  const hasValidationErrors = useMemo(
+    () => parsedRows.some((row) => Object.keys(row.errors).length > 0),
+    [parsedRows],
+  );
 
   function readFileAsText(file: File): Promise<string> {
     return new Promise((resolve, reject) => {
@@ -96,14 +100,17 @@ export function BatchTransferModal() {
     <Dialog.Root open={isOpen} onOpenChange={(open) => (!open ? closeModal() : undefined)}>
       <Dialog.Portal>
         <Dialog.Overlay className={batchTransferModalClassNames.overlay} />
-        <Dialog.Content className={batchTransferModalClassNames.wrapper}>
+        <Dialog.Content
+          className={`${batchTransferModalClassNames.wrapper} ${
+            step === 2 ? batchTransferModalClassNames.wrapperStepTwo : ""
+          }`}
+        >
           <Dialog.Close asChild>
             <button aria-label="Close modal" className={batchTransferModalClassNames.closeButton}>
               ×
             </button>
           </Dialog.Close>
           <Dialog.Title>Batch Transfer</Dialog.Title>
-          <Dialog.Description>Three-step batch transfer workflow</Dialog.Description>
           <div className={batchTransferModalClassNames.stepIndicator}>Step {step} of 3</div>
           {step === 1 && (
             <section>
@@ -117,14 +124,25 @@ export function BatchTransferModal() {
               </label>
               <label>
                 CSV File Upload
-                <input
-                  aria-label="CSV File Upload"
-                  type="file"
-                  accept=".csv,text/csv"
-                  onChange={(event) => {
-                    void handleFileChange(event);
-                  }}
-                />
+                <div className={batchTransferModalClassNames.fileUploadWrapper}>
+                  <input
+                    id="csv-file-upload"
+                    aria-label="CSV File Upload"
+                    type="file"
+                    accept=".csv,text/csv"
+                    className={batchTransferModalClassNames.fileUploadInput}
+                    onChange={(event) => {
+                      void handleFileChange(event);
+                    }}
+                  />
+                  <label
+                    htmlFor="csv-file-upload"
+                    className={batchTransferModalClassNames.fileUploadLabel}
+                  >
+                    <span className={batchTransferModalClassNames.fileUploadIcon}>📁</span>
+                    <span>{selectedFileName || "Choose CSV file or drag and drop"}</span>
+                  </label>
+                </div>
               </label>
               {selectedFileName ? (
                 <div className={batchTransferModalClassNames.uploadMeta}>
@@ -156,28 +174,35 @@ export function BatchTransferModal() {
           {step === 2 && (
             <section>
               <h3>Review Records</h3>
-              <table>
-                <thead>
-                  <tr>
-                    <th>Transaction Date</th>
-                    <th>Account Number</th>
-                    <th>Account Holder Name</th>
-                    <th>Amount</th>
-                    <th>Errors</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {parsedRows.map((row) => (
-                    <tr key={row.rowNumber}>
-                      <td>{row.transactionDate}</td>
-                      <td>{row.accountNumber}</td>
-                      <td>{row.accountHolderName}</td>
-                      <td>{row.amountRaw}</td>
-                      <td>{Object.values(row.errors).join(", ") || "None"}</td>
+              {hasValidationErrors ? (
+                <div role="alert" className={batchTransferModalClassNames.reviewValidationError}>
+                  Some transactions have validation errors. Please review before continuing.
+                </div>
+              ) : null}
+              <div className={batchTransferModalClassNames.reviewTableWrapper}>
+                <table className={batchTransferModalClassNames.reviewTable}>
+                  <thead>
+                    <tr>
+                      <th>Transaction Date</th>
+                      <th>Account Number</th>
+                      <th>Account Holder Name</th>
+                      <th>Amount</th>
+                      <th>Errors</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {parsedRows.map((row) => (
+                      <tr key={row.rowNumber}>
+                        <td>{row.transactionDate}</td>
+                        <td>{row.accountNumber}</td>
+                        <td>{row.accountHolderName}</td>
+                        <td>{row.amountRaw}</td>
+                        <td>{Object.values(row.errors).join(", ")}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
               <button onClick={prevStep}>Back</button>
               <button onClick={nextStep}>Next</button>
             </section>
