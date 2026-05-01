@@ -37,3 +37,9 @@ jobs:
         env:
           # Match GitHub Pages project-site path so CI catches base-path issues
           VITE_BASE: /${{ github.event.repository.name }}/
+
+      - name: Verify security meta in production HTML
+        run: |
+          grep -q 'http-equiv="Content-Security-Policy"' dist/index.html
+          grep -q 'name="referrer"' dist/index.html
+          grep -q 'http-equiv="Permissions-Policy"' dist/index.html

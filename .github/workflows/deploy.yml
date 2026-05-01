@@ -44,6 +44,15 @@ jobs:
         env:
           VITE_BASE: /${{ github.event.repository.name }}/
 
+      # GitHub Pages does not support custom HTTP headers; CSP / referrer / permissions
+      # are injected as <meta> in dist/index.html by Vite (see vite/securityMetaTagsPlugin.ts).
+      # frame-ancestors and X-Frame-Options require a CDN or host that sets response headers.
+      - name: Verify security meta in production HTML
+        run: |
+          grep -q 'http-equiv="Content-Security-Policy"' dist/index.html
+          grep -q 'name="referrer"' dist/index.html
+          grep -q 'http-equiv="Permissions-Policy"' dist/index.html
+
       - uses: actions/upload-pages-artifact@v3
         with:
           path: dist

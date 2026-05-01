@@ -8,6 +8,8 @@ import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig, type Plugin } from "vite";
 
+import { securityMetaTagsPlugin } from "./vite/securityMetaTagsPlugin";
+
 const GZIP_EXTENSIONS = /\.(js|mjs|cjs|css|html|json|svg|webp|ico)$/i;
 /** Skip tiny files; HTML entry is often ~1kB and still benefits from `gzip_static`. */
 const GZIP_MIN_BYTES = 256;
@@ -70,6 +72,7 @@ export default defineConfig(async () => ({
         globPatterns: ["**/*.{js,css,html,svg,png,webp,ico}"],
       },
     }),
+    securityMetaTagsPlugin(),
     gzipStaticAssets(),
   ],
   resolve: {

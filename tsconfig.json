@@ -17,5 +17,5 @@
     "strict": true,
     "types": ["vitest/globals", "vite/client"]
   },
-  "include": ["src", "vite.config.ts", "vitest.config.ts"]
+  "include": ["src", "vite", "vite.config.ts", "vitest.config.ts"]
 }
