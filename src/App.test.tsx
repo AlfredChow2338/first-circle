@@ -69,7 +69,7 @@ beforeEach(async () => {
 });
 
 describe("App flow", () => {
-  const uploadButtonName = "Upload Transaction (.csv)";
+  const uploadButtonName = "Upload Transaction";
 
   it("opens modal and preserves state across steps", async () => {
     render(<App />);
@@ -92,8 +92,12 @@ describe("App flow", () => {
     expect(await screen.findByText("Selected file: valid.csv")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Next"));
-    expect(await screen.findByRole("heading", { level: 3, name: "Review Records" })).toBeInTheDocument();
-    expect(stepper.querySelector('li[data-state="completed"]')).toHaveTextContent("Transfer Details");
+    expect(
+      await screen.findByRole("heading", { level: 3, name: "Review Records" }),
+    ).toBeInTheDocument();
+    expect(stepper.querySelector('li[data-state="completed"]')).toHaveTextContent(
+      "Transfer Details",
+    );
     expect(stepper.querySelector('li[data-state="active"]')).toHaveTextContent("Review Records");
     fireEvent.click(screen.getByText("Back"));
 
@@ -129,7 +133,9 @@ describe("App flow", () => {
     fireEvent.change(screen.getByLabelText("CSV File Upload"), { target: { files: [csvFile] } });
     expect(await screen.findByText("Selected file: valid.csv")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Next"));
-    expect(await screen.findByRole("heading", { level: 3, name: "Review Records" })).toBeInTheDocument();
+    expect(
+      await screen.findByRole("heading", { level: 3, name: "Review Records" }),
+    ).toBeInTheDocument();
     fireEvent.click(screen.getByText("Next"));
     fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
     await waitFor(() => {
@@ -174,12 +180,10 @@ describe("App flow", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }));
-    expect(
-      screen.getByRole("menuitem", { name: "Export Transactions (.csv)" }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: "Export Transactions" })).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Clear Data" })).toBeInTheDocument();
 
-    fireEvent.click(screen.getByRole("menuitem", { name: "Export Transactions (.csv)" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Export Transactions" }));
 
     expect(clickSpy).toHaveBeenCalled();
     expect(createObjectUrlSpy).toHaveBeenCalled();

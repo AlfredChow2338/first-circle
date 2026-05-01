@@ -1,6 +1,6 @@
 import { useState } from "react";
-import { useMessage } from "src/components/shared/Message/MessageProvider";
 
+import { useMessage } from "src/components/shared/Message/MessageProvider";
 import type { TransactionRecord } from "src/components/TransactionTable/types";
 import { getTransactionKey, mockSettleTransaction } from "src/utils/transactions";
 

@@ -98,6 +98,16 @@
 - Import order is enforced as: libraries -> `src/...` -> relative (`./`, `../`).
 - Keep a blank line between import groups.
 
+### CI/CD (GitHub Actions)
+
+- **CI** (`.github/workflows/ci.yml`): on every pull request and on every push, runs `pnpm install --frozen-lockfile`, `pnpm lint`, `pnpm test`, and `pnpm build` with `VITE_BASE` set to the GitHub Pages project path (`/<repository-name>/`).
+- **Deploy** (`.github/workflows/deploy.yml`): on push to `main` or `master`, repeats the same checks, builds, and publishes `dist` to **GitHub Pages** via `upload-pages-artifact` and `deploy-pages`.
+- **One-time repo setup:** Settings → **Pages** → **Build and deployment** → Source: **GitHub Actions** (not “Deploy from a branch”). The workflow uses the default `GITHUB_TOKEN`; no extra deploy secret is required for public Pages.
+- **Live URL (project site):** `https://<owner>.github.io/<repository-name>/` (trailing path matches `VITE_BASE`).
+- **Local dev:** omit `VITE_BASE` so `base` stays `/`. For a local preview of the Pages build:  
+  `VITE_BASE=/first-circle-interview/ pnpm build && pnpm preview` (adjust the segment to your repo name).
+- **Other hosts (Vercel, Netlify, S3):** add that provider’s deploy step and secrets separately; keep `VITE_BASE` aligned with the public path (often `/` for a root domain).
+
 ### Lint and Format Workflow
 
 - Format code: `pnpm format`

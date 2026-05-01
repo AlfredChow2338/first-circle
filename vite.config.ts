@@ -51,6 +51,7 @@ function gzipStaticAssets(): Plugin {
 }
 
 export default defineConfig(async () => ({
+  base: process.env.VITE_BASE || "/",
   plugins: [
     await babel({
       presets: [reactCompilerPreset()],

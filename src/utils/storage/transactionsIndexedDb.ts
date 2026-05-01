@@ -69,10 +69,14 @@ export async function resetTransactionsDbForTests(): Promise<void> {
     try {
       const db = await activeDbPromise;
       db.close();
-    } catch {}
+    } catch {
+      /* ignore close errors */
+    }
   }
 
   try {
     await deleteDB(PERSIST_DB_NAME);
-  } catch (error) {}
+  } catch {
+    /* ignore missing DB */
+  }
 }

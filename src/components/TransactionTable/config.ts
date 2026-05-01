@@ -1,4 +1,5 @@
 import { vars } from "src/styles/theme.css";
+
 import type { TransactionStatus } from "./types";
 
 export const STATUS_META: Record<TransactionStatus, { color: string }> = {

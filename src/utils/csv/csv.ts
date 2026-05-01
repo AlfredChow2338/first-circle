@@ -1,10 +1,12 @@
 import Papa from "papaparse";
 import { z } from "zod";
 
+import { TransactionRecord } from "src/components/TransactionTable/types";
+
+
 import { validateRow } from "../validation";
 
 import type { ParsedCsvRow } from "./types";
-import { TransactionRecord } from "src/components/TransactionTable/types";
 
 const EXPECTED_HEADERS = [
   "Transaction Date",

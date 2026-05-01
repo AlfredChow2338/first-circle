@@ -1,6 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
 import type { TransactionRecord } from "src/components/TransactionTable/types";
+import {
+  readPersistEnvelope,
+  resetTransactionsDbForTests,
+  writePersistEnvelope,
+} from "src/utils/storage/transactionsIndexedDb";
+
+import { useBatchTransferStore } from "./useBatchTransferStore";
 
 vi.mock("src/utils/web-worker/runBatchConfirmComputation", () => ({
   runBatchConfirmComputation: vi.fn(async () => ({
@@ -15,13 +22,6 @@ vi.mock("src/utils/web-worker/runBatchConfirmComputation", () => ({
     ],
   })),
 }));
-import {
-  readPersistEnvelope,
-  resetTransactionsDbForTests,
-  writePersistEnvelope,
-} from "src/utils/storage/transactionsIndexedDb";
-
-import { useBatchTransferStore } from "./useBatchTransferStore";
 
 const baselineTransactions: TransactionRecord[] = [
   {
