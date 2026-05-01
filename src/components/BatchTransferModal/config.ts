@@ -5,7 +5,6 @@ export const batchTransferModalClassNames = {
   wrapperStepTwo: modalStyles.modalContentStepTwo,
   closeButton: modalStyles.closeButton,
   overlay: modalStyles.modalOverlay,
-  stepIndicator: modalStyles.stepIndicator,
   summaryItem: modalStyles.summaryItem,
   uploadMeta: modalStyles.uploadMeta,
   uploadError: modalStyles.uploadError,

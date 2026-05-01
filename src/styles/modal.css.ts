@@ -86,19 +86,6 @@ export const closeButton = style({
   },
 });
 
-export const stepIndicator = style({
-  display: "inline-block",
-  background: "rgba(0, 102, 255, 0.1)",
-  color: vars.color.primaryBlue,
-  padding: `6px ${vars.space.lg}`,
-  borderRadius: vars.borderRadius.xl,
-  fontSize: "12px",
-  fontWeight: 600,
-  marginTop: vars.space.xl,
-  marginBottom: vars.space.xl,
-  border: "1px solid rgba(0, 102, 255, 0.2)",
-});
-
 export const summaryItem = style({
   background: "rgba(255, 255, 255, 0.03)",
   padding: vars.space.lg,

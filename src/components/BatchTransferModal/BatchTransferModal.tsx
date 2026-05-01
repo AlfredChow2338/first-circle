@@ -3,6 +3,7 @@ import { useMemo } from "react";
 
 import { Button } from "src/components/shared/Button";
 import { useMessage } from "src/components/shared/Message/MessageProvider";
+import { Stepper } from "src/components/shared/Stepper";
 import { Table, type TableColumn } from "src/components/shared/Table";
 import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
 import type { ParsedCsvRow } from "src/utils/csv/types";
@@ -13,6 +14,14 @@ import { batchTransferModalClassNames } from "./config";
 import type { ChangeEvent } from "react";
 
 export function BatchTransferModal() {
+  const steps = useMemo(
+    () => [
+      { title: "Transfer Details", description: "Provide transfer name, file, and approver." },
+      { title: "Review Records", description: "Check parsed transactions and validation results." },
+      { title: "Summary", description: "Verify totals before confirming transfer." },
+    ],
+    [],
+  );
   const message = useMessage();
   const {
     isOpen,
@@ -138,7 +147,7 @@ export function BatchTransferModal() {
           <Dialog.Description>
             Upload and review batch transactions before confirming transfer submission.
           </Dialog.Description>
-          <div className={batchTransferModalClassNames.stepIndicator}>Step {step} of 3</div>
+          <Stepper steps={steps} activeStep={step} ariaLabel="Batch transfer progress" />
           {step === 1 && (
             <section>
               <label>
@@ -235,7 +244,7 @@ export function BatchTransferModal() {
                 Back
               </Button>
               <Button variant="success" onClick={() => void handleConfirmBatch()}>
-                Confirm Transfer
+                Confirm
               </Button>
             </section>
           )}

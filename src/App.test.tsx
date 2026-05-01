@@ -74,7 +74,8 @@ describe("App flow", () => {
   it("opens modal and preserves state across steps", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
-    expect(screen.getByText("Step 1 of 3")).toBeInTheDocument();
+    const stepper = screen.getByRole("list", { name: "Batch transfer progress" });
+    expect(stepper.querySelector('li[data-state="active"]')).toHaveTextContent("Transfer Details");
 
     fireEvent.change(screen.getByLabelText("Batch Transfer Name"), {
       target: { value: "Payroll Batch" },
@@ -90,13 +91,14 @@ describe("App flow", () => {
     expect(await screen.findByText("Selected file: valid.csv")).toBeInTheDocument();
 
     fireEvent.click(screen.getByText("Next"));
-    expect(await screen.findByText("Step 2 of 3")).toBeInTheDocument();
-    expect(screen.getByText("Step 2 of 3")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 3, name: "Review Records" })).toBeInTheDocument();
+    expect(stepper.querySelector('li[data-state="completed"]')).toHaveTextContent("Transfer Details");
+    expect(stepper.querySelector('li[data-state="active"]')).toHaveTextContent("Review Records");
     fireEvent.click(screen.getByText("Back"));
 
     expect(screen.getByLabelText("Batch Transfer Name")).toHaveValue("Payroll Batch");
     expect(screen.getByText("Selected file: valid.csv")).toBeInTheDocument();
-    expect(screen.getByText("Step 1 of 3")).toBeInTheDocument();
+    expect(stepper.querySelector('li[data-state="active"]')).toHaveTextContent("Transfer Details");
   });
 
   it("shows upload error for non-csv files", async () => {
@@ -125,7 +127,7 @@ describe("App flow", () => {
     fireEvent.change(screen.getByLabelText("CSV File Upload"), { target: { files: [csvFile] } });
     expect(await screen.findByText("Selected file: valid.csv")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Next"));
-    expect(await screen.findByText("Step 2 of 3")).toBeInTheDocument();
+    expect(await screen.findByRole("heading", { level: 3, name: "Review Records" })).toBeInTheDocument();
     fireEvent.click(screen.getByText("Next"));
     fireEvent.click(screen.getByText("Confirm Transfer"));
     await waitFor(() => {

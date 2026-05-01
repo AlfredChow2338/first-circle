@@ -1,6 +1,5 @@
-## Purpose
-Define the modal-based batch transfer workflow and step navigation behavior.
-## Requirements
+## MODIFIED Requirements
+
 ### Requirement: Open and complete batch transfer in modal stepper
 The system SHALL provide a Batch Transfer modal with three ordered steps (Transfer Details, Review Records, Summary), SHALL keep the user on the home page while the workflow is active, and SHALL render progression using a visual shared stepper indicator instead of plain step-count text.
 
@@ -15,15 +14,3 @@ The system SHALL provide a Batch Transfer modal with three ordered steps (Transf
 #### Scenario: Step header reflects current progress state
 - **WHEN** the user transitions between Step 1, Step 2, and Step 3
 - **THEN** the modal stepper updates to mark prior steps as completed, current step as active, and remaining steps as waiting
-
-### Requirement: Preserve state across step navigation
-The system SHALL preserve all entered batch transfer values across forward and backward navigation until the modal is closed or the flow is submitted.
-
-#### Scenario: Preserve transfer details after review and back navigation
-- **WHEN** the user enters batch name, uploads a file, selects an approver, proceeds to Step 2, and navigates back to Step 1
-- **THEN** the previously entered batch name, file selection, and approver remain populated
-
-#### Scenario: Preserve review data while moving to summary and back
-- **WHEN** parsed records are displayed in Step 2 and the user goes to Step 3 then returns to Step 2
-- **THEN** the same parsed records and validation outcomes remain available without re-uploading the file
-
