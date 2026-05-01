@@ -6,6 +6,8 @@ import { TransactionRecord } from "src/components/TransactionTable/types";
 
 import { validateRow } from "../validation";
 
+import { sanitizeCsvTextFieldForExcel } from "./sanitizeCsvTextFieldForExcel";
+
 import type { ParsedCsvRow } from "./types";
 
 const EXPECTED_HEADERS = [
@@ -71,9 +73,9 @@ export function parseCsvText(csvText: string): ParsedCsvRow[] {
 export function handleExportTransactions(transactions: TransactionRecord[]) {
   const csvContent = Papa.unparse(
     transactions.map((transaction) => ({
-      "Transaction Date": transaction.transactionDate,
-      "Account Number": transaction.accountNumber,
-      "Account Holder Name": transaction.accountHolderName,
+      "Transaction Date": sanitizeCsvTextFieldForExcel(transaction.transactionDate),
+      "Account Number": sanitizeCsvTextFieldForExcel(transaction.accountNumber),
+      "Account Holder Name": sanitizeCsvTextFieldForExcel(transaction.accountHolderName),
       Amount: transaction.amount,
     })),
   );
