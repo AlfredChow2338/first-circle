@@ -15,7 +15,8 @@ const CSP = [
   "form-action 'self'",
   "object-src 'none'",
   "script-src 'self'",
-  "style-src 'self'",
+  /* Beasties inlines critical CSS as a `<style>` block; `'self'` alone blocks it. */
+  "style-src 'self' 'unsafe-inline'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
   "connect-src 'self'",
@@ -40,10 +41,14 @@ export function securityMetaTagsPlugin(): Plugin {
           return html;
         }
         /* After charset keeps the encoding declaration in the first 1024 bytes. */
-        if (!html.includes('<meta charset="UTF-8" />')) {
+        const charsetMeta = html.match(
+          /<meta\s+charset=["']UTF-8["']\s*\/?>/i,
+        );
+        if (!charsetMeta) {
           return html;
         }
-        return html.replace('<meta charset="UTF-8" />', `<meta charset="UTF-8" />${META_BLOCK}`);
+        const tag = charsetMeta[0];
+        return html.replace(tag, `${tag}${META_BLOCK}`);
       },
     },
   };
