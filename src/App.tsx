@@ -5,6 +5,7 @@ import { TransactionDetailModal } from "src/components/TransactionDetailModal";
 import { TransactionTable } from "src/components/TransactionTable";
 import { useMoreMenuActions } from "src/hooks/useMoreMenuActions";
 import { useTransactionActions } from "src/hooks/useTransactionActions";
+import { useTransactionSearch } from "src/hooks/useTransactionSearch";
 import { useBatchTransferStore } from "src/store/useBatchTransferStore";
 
 import { appClassNames } from "./components/config";
@@ -15,6 +16,7 @@ function AppContent() {
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
   const clearLocalData = useBatchTransferStore((s) => s.clearLocalData);
   const settleTransaction = useBatchTransferStore((s) => s.settleTransaction);
+  const { searchQuery, setSearchQuery, filteredTransactions } = useTransactionSearch(transactions);
   const { isMoreMenuOpen, toggleMoreMenu, handleExportFromMenu, handleClearLocalData } =
     useMoreMenuActions({
       transactions,
@@ -69,8 +71,15 @@ function AppContent() {
         </div>
       </div>
       {!hasHydrated ? <p>Loading persisted transactions...</p> : null}
+      <input
+        className={appClassNames.searchInput}
+        aria-label="Search Transactions"
+        placeholder="Search by account number or account holder name"
+        value={searchQuery}
+        onChange={(event) => setSearchQuery(event.target.value)}
+      />
       <TransactionTable
-        transactions={transactions}
+        transactions={filteredTransactions}
         onViewTransaction={handleViewTransaction}
         onSettleTransaction={(transaction) => void handleSettleTransaction(transaction)}
         settlingTransactionKeys={settlingTransactionKeys}

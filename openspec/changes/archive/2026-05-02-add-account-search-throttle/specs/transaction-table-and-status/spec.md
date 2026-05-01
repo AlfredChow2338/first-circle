@@ -1,4 +1,4 @@
-## ADDED Requirements
+## MODIFIED Requirements
 
 ### Requirement: Render home-page transaction table
 The system SHALL render a transaction table on the home page with columns `Transaction Date`, `Account Number`, `Account Holder Name`, `Amount`, `Status`, and `Actions`. The `Actions` column SHALL render status-driven controls for each row. The table SHALL paginate rows using the shared table pagination default of 10 rows per page. The table dataset SHALL support throttled search filtering by `Account Number` and `Account Holder Name` prior to rendering.
@@ -14,17 +14,3 @@ The system SHALL render a transaction table on the home page with columns `Trans
 #### Scenario: Render searched transaction rows
 - **WHEN** the user enters a query for account number or account holder name and the throttle interval elapses
 - **THEN** the home-page transaction table renders only matching rows while preserving existing columns and row actions
-
-### Requirement: Display status labels with consistent colors
-The system SHALL render status labels with the required mapping: `Pending` as yellow, `Settled` as green, and `Failed` as red.
-
-#### Scenario: Render mapped status appearance
-- **WHEN** a row has status value Pending, Settled, or Failed
-- **THEN** the UI applies the corresponding label text and mapped color treatment
-
-### Requirement: Provide failed status error tooltip
-The system SHALL show an info icon next to the `Failed` status label and SHALL present the associated error message as tooltip content for rows with `Failed` status.
-
-#### Scenario: View failed reason from status cell
-- **WHEN** the user hovers or focuses on the info icon adjacent to a Failed status indicator
-- **THEN** the tooltip presents the row's associated error message

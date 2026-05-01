@@ -6,4 +6,5 @@ export const appClassNames = {
   moreMenuWrapper: appStyles.moreMenuWrapperStyle,
   moreMenuPanel: appStyles.moreMenuPanelStyle,
   moreMenuItemButton: appStyles.moreMenuItemButtonStyle,
+  searchInput: appStyles.searchInputStyle,
 };

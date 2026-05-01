@@ -1,5 +1,5 @@
-import { fireEvent, render, screen, waitFor, within } from "@testing-library/react";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { act, fireEvent, render, screen, waitFor, within } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 import { resetTransactionsDbForTests } from "src/utils/storage/transactionsIndexedDb";
 import * as transactionUtils from "src/utils/transactions";
@@ -59,7 +59,83 @@ beforeEach(async () => {
   });
 });
 
+afterEach(() => {
+  vi.useRealTimers();
+});
+
 describe("App transaction actions", () => {
+  it("applies search filtering after 0.5 second throttle delay", async () => {
+    vi.useFakeTimers();
+    useBatchTransferStore.setState({
+      transactions: [
+        {
+          transactionDate: "2025-02-20",
+          accountNumber: "000-123456789-01",
+          accountHolderName: "John Doe",
+          amount: 100,
+          status: "Pending",
+        },
+        {
+          transactionDate: "2025-02-21",
+          accountNumber: "000-987654321-02",
+          accountHolderName: "Jane Smith",
+          amount: 250.5,
+          status: "Settled",
+        },
+      ],
+    });
+
+    render(<App />);
+    fireEvent.change(screen.getByLabelText("Search Transactions"), { target: { value: "jane" } });
+
+    expect(screen.getByText("John Doe")).toBeInTheDocument();
+    expect(screen.getByText("Jane Smith")).toBeInTheDocument();
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    expect(screen.getByText("Jane Smith")).toBeInTheDocument();
+    expect(screen.queryByText("John Doe")).not.toBeInTheDocument();
+  });
+
+  it("filters by account number and preserves row actions", async () => {
+    vi.useFakeTimers();
+    useBatchTransferStore.setState({
+      transactions: [
+        {
+          transactionDate: "2025-02-20",
+          accountNumber: "000-123456789-01",
+          accountHolderName: "John Doe",
+          amount: 100,
+          status: "Pending",
+        },
+        {
+          transactionDate: "2025-02-21",
+          accountNumber: "000-987654321-02",
+          accountHolderName: "Jane Smith",
+          amount: 250.5,
+          status: "Settled",
+        },
+      ],
+    });
+
+    render(<App />);
+    fireEvent.change(screen.getByLabelText("Search Transactions"), {
+      target: { value: "987654321" },
+    });
+
+    act(() => {
+      vi.advanceTimersByTime(500);
+    });
+
+    expect(screen.getByText("Jane Smith")).toBeInTheDocument();
+    expect(screen.queryByText("John Doe")).not.toBeInTheDocument();
+
+    expect(screen.getAllByRole("button", { name: "View" })).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: "Settle" })).not.toBeInTheDocument();
+  });
+
   it("renders paginated transaction rows and navigates to next page", () => {
     useBatchTransferStore.setState({
       transactions: Array.from({ length: 12 }, (_, index) => ({
