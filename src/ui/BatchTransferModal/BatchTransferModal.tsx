@@ -196,7 +196,9 @@ export function BatchTransferModal() {
                 </div>
               ) : null}
               <Table data={parsedRows} columns={reviewColumns} getRowKey={(row) => row.rowNumber} />
-              <Button onClick={prevStep}>Back</Button>
+              <Button variant="secondary" onClick={prevStep}>
+                Back
+              </Button>
               <Button onClick={nextStep}>Next</Button>
             </section>
           )}
@@ -218,8 +220,12 @@ export function BatchTransferModal() {
               <div className={batchTransferModalClassNames.summaryItem}>
                 <strong>Average Payment Value:</strong> ${summary.averagePayment.toFixed(2)}
               </div>
-              <Button onClick={prevStep}>Back</Button>
-              <Button onClick={confirmBatch}>Confirm</Button>
+              <Button variant="secondary" onClick={prevStep}>
+                Back
+              </Button>
+              <Button variant="success" onClick={confirmBatch}>
+                Confirm Transfer
+              </Button>
             </section>
           )}
         </Dialog.Content>

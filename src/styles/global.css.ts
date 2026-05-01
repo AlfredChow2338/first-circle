@@ -58,6 +58,30 @@ globalStyle("button:active", {
   transform: "translateY(0)",
 });
 
+// Remove default button styles - using Button component instead
+globalStyle("button:not([class])", {
+  background: vars.color.primaryBlue,
+  color: vars.color.textPrimary,
+  border: "none",
+  padding: `${vars.space.md} ${vars.space.xxl}`,
+  borderRadius: vars.borderRadius.md,
+  fontSize: "14px",
+  fontWeight: 600,
+  cursor: "pointer",
+  transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+  boxShadow: "0 2px 8px rgba(0, 102, 255, 0.24)",
+});
+
+globalStyle("button:not([class]):hover", {
+  background: vars.color.primaryBlueHover,
+  transform: "translateY(-1px)",
+  boxShadow: "0 4px 12px rgba(0, 102, 255, 0.32)",
+});
+
+globalStyle("button:not([class]):active", {
+  transform: "translateY(0)",
+});
+
 globalStyle("label", {
   display: "block",
   marginBottom: vars.space.xxl,

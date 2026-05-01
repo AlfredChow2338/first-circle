@@ -80,7 +80,9 @@ export default function App() {
       <h1>Batch Transaction Processing System</h1>
       <div className={appClassNames.buttonWrapper}>
         <Button onClick={openModal}>Upload Transaction (.csv)</Button>
-        <Button onClick={handleExportTransactions}>Export Transactions (.csv)</Button>
+        <Button variant="secondary" onClick={handleExportTransactions}>
+          Export Transactions (.csv)
+        </Button>
       </div>
       <input
         ref={fileInputRef}

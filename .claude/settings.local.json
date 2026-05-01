@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Bash(uipro-cli *)"
+      "Bash(uipro-cli *)",
+      "Bash(grep -E \"\\\\.\\(tsx|ts\\)$\")"
     ]
   }
 }
