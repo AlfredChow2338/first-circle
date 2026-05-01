@@ -8,7 +8,8 @@ import App from "./App";
 import { APPROVERS, useBatchTransferStore } from "./store/useBatchTransferStore";
 
 vi.mock("src/utils/transactions", async () => {
-  const actual = await vi.importActual<typeof import("src/utils/transactions")>("src/utils/transactions");
+  const actual =
+    await vi.importActual<typeof import("src/utils/transactions")>("src/utils/transactions");
   return {
     ...actual,
     mockSettleTransaction: vi.fn(() => Promise.resolve()),
@@ -100,7 +101,10 @@ describe("App transaction actions", () => {
     expect(settleButton).toBeDisabled();
     expect(settleButton).toHaveTextContent("Settling...");
 
-    resolveSettle?.();
+    if (!resolveSettle) {
+      throw new Error("Expected settle resolver to be initialized.");
+    }
+    (resolveSettle as () => void)();
 
     await waitFor(() => {
       expect(

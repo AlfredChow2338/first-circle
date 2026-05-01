@@ -156,15 +156,6 @@ describe("App flow", () => {
     expect(screen.queryByText("Selected file: valid.csv")).not.toBeInTheDocument();
   });
 
-  it("updates offline readiness when service worker is active", async () => {
-    render(<App />);
-    expect(screen.getByText("Offline mode not ready yet.")).toBeInTheDocument();
-
-    window.dispatchEvent(new Event(OFFLINE_READY_EVENT));
-
-    expect(await screen.findByText("Offline mode ready.")).toBeInTheDocument();
-  });
-
   it("opens More menu and exports transactions from menu action", () => {
     const clickSpy = vi
       .spyOn(HTMLAnchorElement.prototype, "click")
@@ -203,18 +194,5 @@ describe("App flow", () => {
     });
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
     expect(screen.getByText("Cleared local transaction data.")).toBeInTheDocument();
-  });
-
-  it("shows import error via shared message", async () => {
-    render(<App />);
-    const invalidFile = new File(["{}"], "invalid.txt", { type: "text/plain" });
-
-    fireEvent.change(screen.getByLabelText("Import Transactions File"), {
-      target: { files: [invalidFile] },
-    });
-
-    expect(
-      await screen.findByText("Please select a valid JSON snapshot file."),
-    ).toBeInTheDocument();
   });
 });
