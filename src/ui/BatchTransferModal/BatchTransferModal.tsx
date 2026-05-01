@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { summarizeRows } from "src/domain/summary";
 import type { ParsedCsvRow } from "src/domain/types";
 import { APPROVERS, useBatchTransferStore } from "src/state/useBatchTransferStore";
+import { Button } from "src/ui/shared/Button";
 import { Table, type TableColumn } from "src/ui/shared/Table";
 
 import { batchTransferModalClassNames } from "./config";
@@ -118,9 +119,9 @@ export function BatchTransferModal() {
           }`}
         >
           <Dialog.Close asChild>
-            <button aria-label="Close modal" className={batchTransferModalClassNames.closeButton}>
+            <Button aria-label="Close modal" className={batchTransferModalClassNames.closeButton}>
               ×
-            </button>
+            </Button>
           </Dialog.Close>
           <Dialog.Title>Batch Transfer</Dialog.Title>
           <Dialog.Description>
@@ -183,7 +184,7 @@ export function BatchTransferModal() {
                   ))}
                 </select>
               </label>
-              <button onClick={handleNextFromStepOne}>Next</button>
+              <Button onClick={handleNextFromStepOne}>Next</Button>
             </section>
           )}
           {step === 2 && (
@@ -195,8 +196,8 @@ export function BatchTransferModal() {
                 </div>
               ) : null}
               <Table data={parsedRows} columns={reviewColumns} getRowKey={(row) => row.rowNumber} />
-              <button onClick={prevStep}>Back</button>
-              <button onClick={nextStep}>Next</button>
+              <Button onClick={prevStep}>Back</Button>
+              <Button onClick={nextStep}>Next</Button>
             </section>
           )}
           {step === 3 && (
@@ -217,8 +218,8 @@ export function BatchTransferModal() {
               <div className={batchTransferModalClassNames.summaryItem}>
                 <strong>Average Payment Value:</strong> ${summary.averagePayment.toFixed(2)}
               </div>
-              <button onClick={prevStep}>Back</button>
-              <button onClick={confirmBatch}>Confirm</button>
+              <Button onClick={prevStep}>Back</Button>
+              <Button onClick={confirmBatch}>Confirm</Button>
             </section>
           )}
         </Dialog.Content>

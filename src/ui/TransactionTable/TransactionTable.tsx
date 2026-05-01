@@ -3,6 +3,7 @@ import { useState } from "react";
 import { STATUS_META } from "src/domain/status";
 import type { TransactionRecord } from "src/domain/types";
 import * as tableStyles from "src/styles/table.css";
+import { Button } from "src/ui/shared/Button";
 import { Table, type TableColumn } from "src/ui/shared/Table";
 
 type Props = {
@@ -21,7 +22,7 @@ function FailedStatusCell({ color, errorMessage }: FailedStatusCellProps) {
     <span className={tableStyles.statusInline}>
       <span style={{ color }}>Failed</span>
       <span className={tableStyles.statusTooltipWrapper}>
-        <button
+        <Button
           type="button"
           aria-label="Failed transaction details"
           aria-expanded={isTooltipOpen}
@@ -33,7 +34,7 @@ function FailedStatusCell({ color, errorMessage }: FailedStatusCellProps) {
           onBlur={() => setIsTooltipOpen(false)}
         >
           i
-        </button>
+        </Button>
         {isTooltipOpen ? (
           <span role="tooltip" className={tableStyles.tooltipContent}>
             {errorMessage}

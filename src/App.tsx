@@ -1,3 +1,4 @@
+import Papa from "papaparse";
 import { useEffect, useRef, useState } from "react";
 
 import {
@@ -6,6 +7,7 @@ import {
 } from "src/offline/registerServiceWorker";
 import { useBatchTransferStore } from "src/state/useBatchTransferStore";
 import { BatchTransferModal } from "src/ui/BatchTransferModal";
+import { Button } from "src/ui/shared/Button";
 import { TransactionTable } from "src/ui/TransactionTable";
 
 import { appClassNames } from "./ui/config";
@@ -21,7 +23,6 @@ export default function App() {
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
   const snapshotMessage = useBatchTransferStore((s) => s.snapshotMessage);
   const setSnapshotMessage = useBatchTransferStore((s) => s.setSnapshotMessage);
-  const exportSnapshot = useBatchTransferStore((s) => s.exportSnapshot);
   const importSnapshot = useBatchTransferStore((s) => s.importSnapshot);
 
   useEffect(() => {
@@ -33,16 +34,23 @@ export default function App() {
   }, []);
 
   function handleExportTransactions() {
-    const snapshot = exportSnapshot();
-    const file = new Blob([snapshot], { type: "application/json" });
+    const csvContent = Papa.unparse(
+      transactions.map((transaction) => ({
+        "Transaction Date": transaction.transactionDate,
+        "Account Number": transaction.accountNumber,
+        "Account Holder Name": transaction.accountHolderName,
+        Amount: transaction.amount,
+      })),
+    );
+    const file = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
     const url = URL.createObjectURL(file);
     const anchor = document.createElement("a");
     const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
     anchor.href = url;
-    anchor.download = `transactions-v1-${timestamp}.json`;
+    anchor.download = `transactions-v1-${timestamp}.csv`;
     anchor.click();
     URL.revokeObjectURL(url);
-    setSnapshotMessage("Exported transactions snapshot.");
+    setSnapshotMessage("Exported transactions CSV.");
   }
 
   async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
@@ -71,9 +79,8 @@ export default function App() {
     <main>
       <h1>Batch Transaction Processing System</h1>
       <div className={appClassNames.buttonWrapper}>
-        <button onClick={openModal}>Upload Transaction (.csv)</button>
-        <button onClick={handleExportTransactions}>Export Transactions (.json)</button>
-        {/* <button onClick={handleImportClick}>Import Transactions (.json)</button> */}
+        <Button onClick={openModal}>Upload Transaction (.csv)</Button>
+        <Button onClick={handleExportTransactions}>Export Transactions (.csv)</Button>
       </div>
       <input
         ref={fileInputRef}
