@@ -16,30 +16,43 @@
 - Define coding rules and skill usage guidance that keep implementation consistent and reviewable.
 - Define a Claude Code assisted loop that accelerates development while preserving TDD discipline.
 
-### CSV Upload Rules
-
-- Only `.csv` files are accepted.
-- CSV must use exact header order:
-  - `Transaction Date,Account Number,Account Holder Name,Amount`
-- Each row must contain exactly 4 columns; malformed rows are rejected before Step 2.
-- Invalid file type or malformed structure shows inline validation error and blocks progression.
-
-### Home Actions
-
-- Home page uses a `More` menu for secondary data actions:
-  - `Export Transactions (.csv)` downloads current table rows in CSV format.
-  - `Clear Local Data` removes all persisted IndexedDB transaction data after confirmation.
-- Clearing local data also resets in-memory transaction state so the table updates immediately.
-- Action feedback (export/import/clear) is shown through shared transient messages (antd-message style) with success/error variants.
-
 ### Offline Support
 
 - The app registers a service worker in production builds and precaches app-shell assets.
 - After one successful online visit, reloads can open the app while offline.
 - Offline mode uses IndexedDB as the source of truth for persisted transactions during hydration.
-- UI shows readiness:
-  - `Offline mode not ready yet.` before the page is controlled by the active service worker.
-  - `Offline mode ready.` once service worker control is active.
+
+### Security Protection
+
+1. CSV formula injection on export (integrity / user harm)
+
+Text columns (`Transaction Date`, `Account Number`, `Account Holder Name`) are passed through `sanitizeCsvTextFieldForExcel` before export: values whose first non-whitespace character is `=`, `+`, `-`, `@`, tab, CR, `|`, or a leading BOM before those triggers get a leading `'` so Excel/Sheets treat the cell as text.
+
+2. Denial-of-service / resource abuse in case uploading to server / storage (availability)
+
+The flow still reads the whole file as text and parses it (worker runs after parse). Uploads are rejected if **`file.size` exceeds 10 MB** (`assertCsvFileSizeAllowed`), and **`parseCsvText` throws** if there are more than **10,000 data rows** (after header). Errors surface as modal upload/validation messages.
+
+3. Content-Security-Policy and related policies (headers vs meta)
+
+Production builds inject **`<meta>`** tags via `vite/securityMetaTagsPlugin.ts`: Content-Security-Policy (default/script/style/img/font/connect/worker/manifest `self`, `upgrade-insecure-requests`, etc.), Referrer-Policy(`strict-origin-when-cross-origin` via `<meta name="referrer">`), and Permissions-Policy (restrict camera, mic, geolocation, payment, USB).
+
+Dev server skips these so HMR is not blocked. CI/deploy workflows grep `dist/index.html` so a regression fails the build.
+
+4. Regular audit to prevent potential supply chain attacks
+
+Heavy use of npm packages (React, Radix, PapaParse, Workbox, Zod, etc.). Supply-chain risk is ongoing, not a one-time fix.
+
+CI runs `pnpm audit --audit-level high` on every push/PR and on a weekly schedule (`.github/workflows/ci.yml`). `pnpm audit` is also available as `pnpm run audit`. Dependabot opens weekly grouped npm updates (`.github/dependabot.yml`). The lockfile stays `pnpm-lock.yaml` with `pnpm install --frozen-lockfile`\*\* in CI. `pnpm.overrides` may pin patched transitive versions when advisories lag upstream (document any override in commit messages).
+
+Enable GitHub Dependabot alerts. Consider **OSV-Scanner** or **Snyk** for extra signal.
+
+### Security Concerns
+
+_Sensitive-ish data only on the client (confidentiality & compliance)_
+
+Transactions and batch metadata live in IndexedDB (and memory) unencrypted. Anyone with access to the same browser profile (or malware on the device) can read or tamper with data. There is no audit trail, no server-side controls, and no data-classification story.
+
+Improve: Server-side storage, encryption at rest (with keys not only in the client), authorization, retention policies, and no long-lived PII in client storage without explicit product/legal sign-off.
 
 ### Tech stack (React and TypeScript friendly)
 
@@ -62,14 +75,17 @@
   - ✅ Mature CSV parser with robust handling of edge cases (quotes, delimiters, malformed rows).
   - ✅ Browser-friendly and fast for client-side parsing.
   - ✅ Supports step/chunk parsing patterns for larger files.
+
 - zustnd
   - ✅ Lightweight state management with low boilerplate and readable store patterns.
   - ✅ Flexible: simple local state up to app-wide state, with middleware support (persist, etc.).
   - ✅ Works very well with React hooks and TypeScript.
+
 - Radix dialog/tooltip
   - ✅ Accessibility-first primitives (keyboard navigation, focus management, ARIA behavior).
   - ✅ Unstyled components let you keep your own design system.
   - ✅ Reliable behavior for tricky UI interactions across browsers.
+
 - Vitest
   - ✅ Very fast test runs with Vite-native integration.
   - ✅ Jest-like API makes adoption easy.
@@ -91,6 +107,11 @@
   - ✅ Tree-shakeable - Unused styles are removed from production
 
 - Package manager: Pnpm 10
+  - ✅ Disk and install speed: pnpm keeps one global store of package contents and links them into each project with hard links.
+
+  - ✅ Strict, predictable node_modules layout: packages can only import what they declare in their own package.json, not arbitrary nested deps.
+
+  - ✅ First-class monorepo support: efficient linking across packages are built in.
 
 ### Import Rules
 
