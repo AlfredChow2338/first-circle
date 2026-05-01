@@ -1,12 +1,12 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 
-import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
-import { summarizeRows } from "src/utils/summary";
-import type { ParsedCsvRow } from "src/utils/csv/types";
 import { Button } from "src/components/shared/Button";
 import { useMessage } from "src/components/shared/Message/MessageProvider";
 import { Table, type TableColumn } from "src/components/shared/Table";
+import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
+import type { ParsedCsvRow } from "src/utils/csv/types";
+import { summarizeRows } from "src/utils/summary";
 
 import { batchTransferModalClassNames } from "./config";
 
@@ -115,8 +115,8 @@ export function BatchTransferModal() {
     }
   }
 
-  function handleConfirmBatch() {
-    confirmBatch();
+  async function handleConfirmBatch() {
+    await confirmBatch();
     message.success("Batch transfer confirmed.");
   }
 
@@ -234,7 +234,7 @@ export function BatchTransferModal() {
               <Button variant="secondary" onClick={prevStep}>
                 Back
               </Button>
-              <Button variant="success" onClick={handleConfirmBatch}>
+              <Button variant="success" onClick={() => void handleConfirmBatch()}>
                 Confirm Transfer
               </Button>
             </section>

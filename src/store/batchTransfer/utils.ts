@@ -1,5 +1,12 @@
 import type { TransactionRecord } from "src/components/TransactionTable/types";
 import type { ParsedCsvRow } from "src/utils/csv/types";
+import { summarizeRows } from "src/utils/summary";
+import type { Summary } from "src/utils/summary/summary";
+
+export type BatchConfirmComputationResult = {
+  transactions: TransactionRecord[];
+  summary: Summary;
+};
 
 export function mapParsedRowsToTransactions(parsedRows: ParsedCsvRow[]): TransactionRecord[] {
   return parsedRows.map((row) => {
@@ -13,4 +20,11 @@ export function mapParsedRowsToTransactions(parsedRows: ParsedCsvRow[]): Transac
       errorMessage: hasErrors ? Object.values(row.errors).join(", ") : undefined,
     };
   });
+}
+
+export function computeBatchConfirmResult(parsedRows: ParsedCsvRow[]): BatchConfirmComputationResult {
+  return {
+    transactions: mapParsedRowsToTransactions(parsedRows),
+    summary: summarizeRows(parsedRows),
+  };
 }

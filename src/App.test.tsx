@@ -1,7 +1,6 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { OFFLINE_READY_EVENT } from "src/utils/service-worker/registerServiceWorker";
 import { resetTransactionsDbForTests } from "src/utils/storage/transactionsIndexedDb";
 
 import App from "./App";
@@ -129,7 +128,9 @@ describe("App flow", () => {
     expect(await screen.findByText("Step 2 of 3")).toBeInTheDocument();
     fireEvent.click(screen.getByText("Next"));
     fireEvent.click(screen.getByText("Confirm Transfer"));
-    expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(initial);
+    await waitFor(() => {
+      expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(initial);
+    });
   });
 
   it("clears modal state when closed from cross icon", async () => {
@@ -171,7 +172,7 @@ describe("App flow", () => {
     expect(
       screen.getByRole("menuitem", { name: "Export Transactions (.csv)" }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("menuitem", { name: "Clear Local Data" })).toBeInTheDocument();
+    expect(screen.getByRole("menuitem", { name: "Clear Data" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("menuitem", { name: "Export Transactions (.csv)" }));
 
@@ -187,7 +188,7 @@ describe("App flow", () => {
     expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(0);
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }));
-    fireEvent.click(screen.getByRole("menuitem", { name: "Clear Local Data" }));
+    fireEvent.click(screen.getByRole("menuitem", { name: "Clear Data" }));
 
     await waitFor(() => {
       expect(useBatchTransferStore.getState().transactions).toEqual([]);

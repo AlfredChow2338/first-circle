@@ -3,11 +3,10 @@ import { persist } from "zustand/middleware";
 
 import { APPROVERS, initialModalState, PERSIST_KEY } from "src/store/batchTransfer/constants";
 import type { BatchTransferState, Step } from "src/store/batchTransfer/types";
-import { mapParsedRowsToTransactions } from "src/store/batchTransfer/utils";
 import { parseCsvText } from "src/utils/csv/csv";
 import { createIndexedDbPersistStorage } from "src/utils/storage/createIndexedDbPersistStorage";
-import { summarizeRows } from "src/utils/summary";
 import { getTransactionKey } from "src/utils/transactions";
+import { runBatchConfirmComputation } from "src/utils/web-worker/runBatchConfirmComputation";
 
 export const useBatchTransferStore = create<BatchTransferState>()(
   persist(
@@ -42,10 +41,9 @@ export const useBatchTransferStore = create<BatchTransferState>()(
         const parsedRows = parseCsvText(get().csvContent);
         set({ parsedRows, uploadError: null });
       },
-      confirmBatch: () => {
+      confirmBatch: async () => {
         const { parsedRows } = get();
-        const newTransactions = mapParsedRowsToTransactions(parsedRows);
-        summarizeRows(parsedRows);
+        const { transactions: newTransactions } = await runBatchConfirmComputation(parsedRows);
         set((state) => ({
           transactions: [...state.transactions, ...newTransactions],
           isOpen: false,
