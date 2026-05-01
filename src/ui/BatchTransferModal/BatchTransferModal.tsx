@@ -1,12 +1,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 
-
 import { summarizeRows } from "src/domain/summary";
-import {
-  APPROVERS,
-  useBatchTransferStore,
-} from "src/state/useBatchTransferStore";
+import { APPROVERS, useBatchTransferStore } from "src/state/useBatchTransferStore";
 
 import { batchTransferModalClassNames } from "./config";
 
@@ -97,17 +93,17 @@ export function BatchTransferModal() {
   }
 
   return (
-    <Dialog.Root
-      open={isOpen}
-      onOpenChange={(open) => (!open ? closeModal() : undefined)}
-    >
+    <Dialog.Root open={isOpen} onOpenChange={(open) => (!open ? closeModal() : undefined)}>
       <Dialog.Portal>
         <Dialog.Overlay className={batchTransferModalClassNames.overlay} />
         <Dialog.Content className={batchTransferModalClassNames.wrapper}>
+          <Dialog.Close asChild>
+            <button aria-label="Close modal" className={batchTransferModalClassNames.closeButton}>
+              ×
+            </button>
+          </Dialog.Close>
           <Dialog.Title>Batch Transfer</Dialog.Title>
-          <Dialog.Description>
-            Three-step batch transfer workflow
-          </Dialog.Description>
+          <Dialog.Description>Three-step batch transfer workflow</Dialog.Description>
           <div className={batchTransferModalClassNames.stepIndicator}>Step {step} of 3</div>
           {step === 1 && (
             <section>
@@ -154,9 +150,7 @@ export function BatchTransferModal() {
                   ))}
                 </select>
               </label>
-              <button onClick={handleNextFromStepOne}>
-                Next
-              </button>
+              <button onClick={handleNextFromStepOne}>Next</button>
             </section>
           )}
           {step === 2 && (
@@ -204,8 +198,7 @@ export function BatchTransferModal() {
                 <strong>Number of Payments:</strong> {summary.paymentCount}
               </div>
               <div className={batchTransferModalClassNames.summaryItem}>
-                <strong>Average Payment Value:</strong> $
-                {summary.averagePayment.toFixed(2)}
+                <strong>Average Payment Value:</strong> ${summary.averagePayment.toFixed(2)}
               </div>
               <button onClick={prevStep}>Back</button>
               <button onClick={confirmBatch}>Confirm</button>

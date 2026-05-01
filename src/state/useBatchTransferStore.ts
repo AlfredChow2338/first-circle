@@ -56,6 +56,16 @@ const initialTransactions: TransactionRecord[] = [
 
 export const APPROVERS = ["Olivia Lee", "Daniel Wong", "Emma Chen", "Noah Lin"];
 
+const initialModalState = {
+  step: 1 as Step,
+  batchName: "",
+  approver: APPROVERS[0],
+  selectedFileName: "",
+  uploadError: null as string | null,
+  csvContent: "",
+  parsedRows: [] as ParsedCsvRow[],
+};
+
 export const useBatchTransferStore = create<BatchTransferState>((set, get) => ({
   isOpen: false,
   step: 1,
@@ -67,7 +77,11 @@ export const useBatchTransferStore = create<BatchTransferState>((set, get) => ({
   parsedRows: [],
   transactions: initialTransactions,
   openModal: () => set({ isOpen: true, step: 1 }),
-  closeModal: () => set({ isOpen: false }),
+  closeModal: () =>
+    set({
+      isOpen: false,
+      ...initialModalState,
+    }),
   nextStep: () => set((state) => ({ step: Math.min(3, state.step + 1) as Step })),
   prevStep: () => set((state) => ({ step: Math.max(1, state.step - 1) as Step })),
   setBatchName: (value) => set({ batchName: value }),
@@ -96,7 +110,7 @@ export const useBatchTransferStore = create<BatchTransferState>((set, get) => ({
     set((state) => ({
       transactions: [...state.transactions, ...newTransactions],
       isOpen: false,
-      step: 1,
+      ...initialModalState,
     }));
   },
 }));

@@ -118,4 +118,26 @@ describe("App flow", () => {
     fireEvent.click(screen.getByText("Confirm"));
     expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(initial);
   });
+
+  it("clears modal state when closed from cross icon", async () => {
+    render(<App />);
+    fireEvent.click(screen.getAllByRole("button", { name: "Batch Transfer" })[0]);
+    fireEvent.change(screen.getByLabelText("Batch Transfer Name"), { target: { value: "To Be Cleared" } });
+
+    const csvFile = new File(
+      [
+        "Transaction Date,Account Number,Account Holder Name,Amount\n2025-02-20,000-123456789-01,John Doe,100.00",
+      ],
+      "valid.csv",
+      { type: "text/csv" },
+    );
+    fireEvent.change(screen.getByLabelText("CSV File Upload"), { target: { files: [csvFile] } });
+    expect(await screen.findByText("Selected file: valid.csv")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Close modal" }));
+    fireEvent.click(screen.getAllByRole("button", { name: "Batch Transfer" })[0]);
+
+    expect(screen.getByLabelText("Batch Transfer Name")).toHaveValue("");
+    expect(screen.queryByText("Selected file: valid.csv")).not.toBeInTheDocument();
+  });
 });

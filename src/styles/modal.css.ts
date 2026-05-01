@@ -46,6 +46,28 @@ export const modalContent = style({
   animation: `${slideIn} 0.3s cubic-bezier(0.4, 0, 0.2, 1)`,
 });
 
+export const closeButton = style({
+  position: "absolute",
+  top: vars.space.md,
+  right: vars.space.md,
+  border: "none",
+  borderRadius: vars.borderRadius.md,
+  background: "rgba(255, 255, 255, 0.08)",
+  color: vars.color.textPrimary,
+  height: "32px",
+  lineHeight: "12px",
+  textAlign: "center",
+  cursor: "pointer",
+  fontSize: "20px",
+  fontWeight: 700,
+  selectors: {
+    "&:hover": {
+      background: "rgba(255, 255, 255, 0.16)",
+    },
+  },
+  padding: vars.space.md,
+});
+
 export const stepIndicator = style({
   display: "inline-block",
   background: "rgba(0, 102, 255, 0.1)",
