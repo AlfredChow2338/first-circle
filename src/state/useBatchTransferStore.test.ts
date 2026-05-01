@@ -1,6 +1,10 @@
 import { beforeEach, describe, expect, it } from "vitest";
 
 import type { TransactionRecord } from "src/domain/types";
+import {
+  resetTransactionsDbForTests,
+  writePersistEnvelope,
+} from "src/storage/transactionsIndexedDb";
 
 import { useBatchTransferStore } from "./useBatchTransferStore";
 
@@ -15,8 +19,8 @@ const baselineTransactions: TransactionRecord[] = [
 ];
 
 describe("useBatchTransferStore snapshot persistence", () => {
-  beforeEach(() => {
-    localStorage.clear();
+  beforeEach(async () => {
+    await resetTransactionsDbForTests();
     useBatchTransferStore.setState({
       transactions: baselineTransactions,
       snapshotMessage: null,
@@ -53,7 +57,7 @@ describe("useBatchTransferStore snapshot persistence", () => {
     expect(useBatchTransferStore.getState().transactions).toEqual(before);
   });
 
-  it("rehydrates persisted transactions from local storage", async () => {
+  it("rehydrates persisted transactions from IndexedDB", async () => {
     const persistedTransactions: TransactionRecord[] = [
       {
         transactionDate: "2025-04-01",
@@ -66,10 +70,10 @@ describe("useBatchTransferStore snapshot persistence", () => {
     ];
 
     useBatchTransferStore.setState({ transactions: baselineTransactions, hasHydrated: false });
-    localStorage.setItem(
-      "batch-transactions-v1",
-      JSON.stringify({ state: { transactions: persistedTransactions }, version: 0 }),
-    );
+    await writePersistEnvelope("batch-transactions-v1", {
+      state: { transactions: persistedTransactions },
+      version: 0,
+    });
 
     await (useBatchTransferStore as unknown as { persist: { rehydrate: () => Promise<void> } }).persist.rehydrate();
     expect(useBatchTransferStore.getState().transactions).toEqual(persistedTransactions);

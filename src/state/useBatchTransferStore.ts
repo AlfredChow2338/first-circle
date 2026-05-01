@@ -1,10 +1,11 @@
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist } from "zustand/middleware";
 
 import { parseCsvText } from "src/domain/csv";
 import { createSnapshot, parseSnapshot } from "src/domain/snapshot";
 import { summarizeRows } from "src/domain/summary";
 import type { ParsedCsvRow, TransactionRecord } from "src/domain/types";
+import { createIndexedDbPersistStorage } from "src/storage/createIndexedDbPersistStorage";
 
 type Step = 1 | 2 | 3;
 
@@ -139,7 +140,7 @@ export const useBatchTransferStore = create<BatchTransferState>()(
     }),
     {
       name: "batch-transactions-v1",
-      storage: createJSONStorage(() => localStorage),
+      storage: createIndexedDbPersistStorage(),
       partialize: (state) => ({
         transactions: state.transactions,
       }),

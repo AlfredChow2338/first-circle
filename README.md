@@ -19,7 +19,7 @@
 
 ### Persistence and Snapshot
 
-- Transactions are persisted in browser local storage under key: `batch-transactions-v1`.
+- Transactions are persisted in **IndexedDB** (database `batch-transactions-db`, object store `zustand-persist`, persist name `batch-transactions-v1`).
 - Only durable transaction data is persisted; modal/transient state is not persisted.
 - Home page supports:
   - `Export Transactions` -> downloads versioned JSON snapshot
@@ -57,6 +57,7 @@
 - Radix dialog/tooltip
 - Vitest
 - Reat Testing Library (RTL)
+- IDB (IndexedDB)
 
 - vanilla-extract/css
   - ✅ Type-safe - ClassNames are typed and autocompleted
@@ -79,9 +80,18 @@
 - Autofix lint issues: `pnpm lint:fix`
 - Recommended local sequence: `pnpm format && pnpm lint`
 
-### Local storage limitations and safeguards
+### Data Persistence Consideration
 
-Limitation: browser storage quota can fail on very large datasets.
-Safeguard: keep persistence scoped to transaction data only; snapshot export provides backup path.
-Limitation: schema evolution across versions.
-Safeguard: versioned snapshot contract (version: 1) with strict validation and fail-fast behavior for unsupported payloads.
+- Local storage cannot handle large-size dataset due to 10MB size limit.
+- Another alternative will be IndexDB
+  - ✅ Async, much larger quota (browser/device dependent, often hundreds of MB+)
+  - ✅ Can store structured objects directly (without `JSON.stringify`)
+  - ✅ Libraries such as `idb` or `Dexie` provide good DX
+
+### Practical approach for large-size CSV
+
+- User selects file.
+- Read it in chunks (File.stream() or chunked slicing).
+- Parse incrementally (worker thread recommended).
+- Persist records in IndexedDB in batches (e.g., 500–5000 rows per transaction).
+- UI reads paginated slices from IndexedDB (not all rows at once).

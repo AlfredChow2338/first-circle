@@ -1,10 +1,13 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { resetTransactionsDbForTests } from "src/storage/transactionsIndexedDb";
+
 import App from "./App";
 import { APPROVERS, useBatchTransferStore } from "./state/useBatchTransferStore";
 
-beforeEach(() => {
+beforeEach(async () => {
+  await resetTransactionsDbForTests();
   class MockFileReader {
     public result: string | ArrayBuffer | null = null;
     public onload: null | (() => void) = null;
