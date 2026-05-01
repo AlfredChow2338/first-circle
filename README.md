@@ -30,6 +30,26 @@
   - `source: "first-circle-interview"`
   - `transactions` array
 
+### Offline Support
+
+- The app registers a service worker in production builds and precaches app-shell assets.
+- After one successful online visit, reloads can open the app while offline.
+- Offline mode uses IndexedDB as the source of truth for persisted transactions during hydration.
+- UI shows readiness:
+  - `Offline mode not ready yet.` before the page is controlled by the active service worker.
+  - `Offline mode ready.` once service worker control is active.
+
+### Offline Verification
+
+- Build and preview production output:
+  - `pnpm build`
+  - `pnpm preview`
+- Open the app once while online, then switch DevTools network to **Offline** and reload.
+- Confirm:
+  - The app shell still renders.
+  - Existing transactions are hydrated from IndexedDB.
+  - Snapshot export/import behavior remains unchanged.
+
 ### Goals
 
 - Deliver a complete three-step modal transfer workflow with bidirectional step navigation and no state loss.

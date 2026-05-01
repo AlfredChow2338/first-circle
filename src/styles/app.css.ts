@@ -7,3 +7,10 @@ export const buttonWrapperStyle = style({
   gap: vars.space.md,
   justifyContent: "space-between",
 });
+
+export const offlineStatusStyle = style({
+  marginTop: vars.space.md,
+  marginBottom: vars.space.lg,
+  color: vars.color.textSecondary,
+  fontSize: "13px",
+});

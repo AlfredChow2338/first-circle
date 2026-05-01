@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { beforeEach, describe, expect, it } from "vitest";
 
+import { OFFLINE_READY_EVENT } from "src/offline/registerServiceWorker";
 import { resetTransactionsDbForTests } from "src/storage/transactionsIndexedDb";
 
 import App from "./App";
@@ -146,5 +147,14 @@ describe("App flow", () => {
 
     expect(screen.getByLabelText("Batch Transfer Name")).toHaveValue("");
     expect(screen.queryByText("Selected file: valid.csv")).not.toBeInTheDocument();
+  });
+
+  it("updates offline readiness when service worker is active", async () => {
+    render(<App />);
+    expect(screen.getByText("Offline mode not ready yet.")).toBeInTheDocument();
+
+    window.dispatchEvent(new Event(OFFLINE_READY_EVENT));
+
+    expect(await screen.findByText("Offline mode ready.")).toBeInTheDocument();
   });
 });

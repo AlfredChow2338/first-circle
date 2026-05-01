@@ -79,4 +79,31 @@ describe("useBatchTransferStore snapshot persistence", () => {
     expect(useBatchTransferStore.getState().transactions).toEqual(persistedTransactions);
     expect(useBatchTransferStore.getState().hasHydrated).toBe(true);
   });
+
+  it("rehydrates persisted transactions while offline", async () => {
+    const persistedTransactions: TransactionRecord[] = [
+      {
+        transactionDate: "2025-04-02",
+        accountNumber: "000-444555666-04",
+        accountHolderName: "Taylor Chen",
+        amount: 125,
+        status: "Pending",
+      },
+    ];
+
+    useBatchTransferStore.setState({ transactions: baselineTransactions, hasHydrated: false });
+    await writePersistEnvelope("batch-transactions-v1", {
+      state: { transactions: persistedTransactions },
+      version: 0,
+    });
+    Object.defineProperty(window.navigator, "onLine", {
+      configurable: true,
+      value: false,
+    });
+
+    await (useBatchTransferStore as unknown as { persist: { rehydrate: () => Promise<void> } }).persist.rehydrate();
+
+    expect(useBatchTransferStore.getState().transactions).toEqual(persistedTransactions);
+    expect(useBatchTransferStore.getState().hasHydrated).toBe(true);
+  });
 });
