@@ -62,7 +62,7 @@ function AppContent() {
                 className={appClassNames.moreMenuItemButton}
                 onClick={() => void handleClearLocalData()}
               >
-                Clear Local Data
+                Clear Data
               </Button>
             </div>
           ) : null}

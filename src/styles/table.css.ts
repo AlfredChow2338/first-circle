@@ -135,3 +135,37 @@ export const actionsInline = style({
   alignItems: "center",
   gap: vars.space.sm,
 });
+
+export const paginationContainer = style({
+  marginTop: vars.space.lg,
+  display: "flex",
+  alignItems: "baseline",
+  justifyContent: "center",
+  gap: vars.space.md,
+  flexWrap: "wrap",
+});
+
+export const paginationButton = style({
+  border: `1px solid ${vars.color.cardBorder}`,
+  borderRadius: vars.borderRadius.md,
+  background: "rgba(255, 255, 255, 0.04)",
+  color: vars.color.textPrimary,
+  padding: `${vars.space.sm} ${vars.space.md}`,
+  fontSize: "13px",
+  fontWeight: 600,
+  cursor: "pointer",
+  selectors: {
+    "&:disabled": {
+      opacity: 0.45,
+      cursor: "not-allowed",
+    },
+    "&:not(:disabled):hover": {
+      background: "rgba(255, 255, 255, 0.1)",
+    },
+  },
+});
+
+export const paginationLabel = style({
+  fontSize: "13px",
+  color: vars.color.textSecondary,
+});

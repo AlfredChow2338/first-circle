@@ -18,6 +18,10 @@ globalStyle("body", {
   MozOsxFontSmoothing: "grayscale",
 });
 
+globalStyle("html, body", {
+  overflowX: "hidden",
+});
+
 globalStyle("main", {
   maxWidth: "1400px",
   margin: "0 auto",

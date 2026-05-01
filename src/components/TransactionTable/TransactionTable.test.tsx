@@ -118,4 +118,26 @@ describe("TransactionTable", () => {
     expect(onSettleTransaction).toHaveBeenCalledTimes(1);
     expect(screen.getAllByRole("button", { name: "View" })).toHaveLength(2);
   });
+
+  it("paginates transactions when more than 10 rows exist", () => {
+    render(
+      <TransactionTable
+        onViewTransaction={() => undefined}
+        onSettleTransaction={() => undefined}
+        settlingTransactionKeys={new Set()}
+        transactions={Array.from({ length: 12 }, (_, index) => ({
+          transactionDate: `2025-03-${String(index + 1).padStart(2, "0")}`,
+          accountNumber: `000-000000000-${String(index + 1).padStart(2, "0")}`,
+          accountHolderName: `User ${index + 1}`,
+          amount: index + 1,
+          status: "Pending" as const,
+        }))}
+      />,
+    );
+
+    expect(screen.getByText("User 1")).toBeInTheDocument();
+    expect(screen.getByText("User 10")).toBeInTheDocument();
+    expect(screen.queryByText("User 11")).not.toBeInTheDocument();
+    expect(screen.getByText("Page 1 of 2")).toBeInTheDocument();
+  });
 });

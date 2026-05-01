@@ -1,4 +1,4 @@
-## ADDED Requirements
+## MODIFIED Requirements
 
 ### Requirement: Render home-page transaction table
 The system SHALL render a transaction table on the home page with columns `Transaction Date`, `Account Number`, `Account Holder Name`, `Amount`, `Status`, and `Actions`. The `Actions` column SHALL render status-driven controls for each row. The table SHALL paginate rows using the shared table pagination default of 10 rows per page.
@@ -10,17 +10,3 @@ The system SHALL render a transaction table on the home page with columns `Trans
 #### Scenario: Render paginated transaction rows
 - **WHEN** the transaction dataset contains more than 10 records
 - **THEN** the home-page transaction table initially shows only the first 10 rows and allows navigation to remaining rows via pagination controls
-
-### Requirement: Display status labels with consistent colors
-The system SHALL render status labels with the required mapping: `Pending` as yellow, `Settled` as green, and `Failed` as red.
-
-#### Scenario: Render mapped status appearance
-- **WHEN** a row has status value Pending, Settled, or Failed
-- **THEN** the UI applies the corresponding label text and mapped color treatment
-
-### Requirement: Provide failed status error tooltip
-The system SHALL show an info icon next to the `Failed` status label and SHALL present the associated error message as tooltip content for rows with `Failed` status.
-
-#### Scenario: View failed reason from status cell
-- **WHEN** the user hovers or focuses on the info icon adjacent to a Failed status indicator
-- **THEN** the tooltip presents the row's associated error message

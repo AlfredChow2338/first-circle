@@ -60,6 +60,31 @@ beforeEach(async () => {
 });
 
 describe("App transaction actions", () => {
+  it("renders paginated transaction rows and navigates to next page", () => {
+    useBatchTransferStore.setState({
+      transactions: Array.from({ length: 12 }, (_, index) => ({
+        transactionDate: `2025-03-${String(index + 1).padStart(2, "0")}`,
+        accountNumber: `000-000000000-${String(index + 1).padStart(2, "0")}`,
+        accountHolderName: `User ${index + 1}`,
+        amount: index + 1,
+        status: "Pending",
+      })),
+    });
+    render(<App />);
+
+    expect(screen.getByText("User 1")).toBeInTheDocument();
+    expect(screen.getByText("User 10")).toBeInTheDocument();
+    expect(screen.queryByText("User 11")).not.toBeInTheDocument();
+    expect(screen.getByText("Page 1 of 2")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Next page" }));
+
+    expect(screen.getByText("Page 2 of 2")).toBeInTheDocument();
+    expect(screen.getByText("User 11")).toBeInTheDocument();
+    expect(screen.getByText("User 12")).toBeInTheDocument();
+    expect(screen.queryByText("User 1")).not.toBeInTheDocument();
+  });
+
   it("shows status-based action combinations in Actions column", () => {
     render(<App />);
 
