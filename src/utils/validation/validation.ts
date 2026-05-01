@@ -1,4 +1,4 @@
-import type { CsvRowValidation } from "./types";
+import type { CsvRowValidation } from "src/utils/csv/types";
 
 const ACCOUNT_PATTERN = /^\d{3}-\d{9}-\d{2}$/;
 const ISO_DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;

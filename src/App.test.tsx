@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-import { OFFLINE_READY_EVENT } from "src/offline/registerServiceWorker";
+import { OFFLINE_READY_EVENT } from "src/utils/service-worker/registerServiceWorker";
 import { resetTransactionsDbForTests } from "src/storage/transactionsIndexedDb";
 
 import App from "./App";
@@ -77,7 +77,9 @@ describe("App flow", () => {
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
     expect(screen.getByText("Step 1 of 3")).toBeInTheDocument();
 
-    fireEvent.change(screen.getByLabelText("Batch Transfer Name"), { target: { value: "Payroll Batch" } });
+    fireEvent.change(screen.getByLabelText("Batch Transfer Name"), {
+      target: { value: "Payroll Batch" },
+    });
     const csvFile = new File(
       [
         "Transaction Date,Account Number,Account Holder Name,Amount\n2025-02-20,000-123456789-01,John Doe,100.00",
@@ -105,7 +107,9 @@ describe("App flow", () => {
     fireEvent.change(screen.getByLabelText("CSV File Upload"), { target: { files: [textFile] } });
     expect(await screen.findByRole("alert")).toHaveTextContent("Please upload a valid .csv file.");
     fireEvent.click(screen.getByText("Next"));
-    expect(screen.getByRole("alert")).toHaveTextContent("Please upload a CSV file before continuing.");
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "Please upload a CSV file before continuing.",
+    );
   });
 
   it("appends transactions when confirmed", async () => {
@@ -131,7 +135,9 @@ describe("App flow", () => {
   it("clears modal state when closed from cross icon", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
-    fireEvent.change(screen.getByLabelText("Batch Transfer Name"), { target: { value: "To Be Cleared" } });
+    fireEvent.change(screen.getByLabelText("Batch Transfer Name"), {
+      target: { value: "To Be Cleared" },
+    });
 
     const csvFile = new File(
       [
@@ -160,7 +166,9 @@ describe("App flow", () => {
   });
 
   it("opens More menu and exports transactions from menu action", () => {
-    const clickSpy = vi.spyOn(HTMLAnchorElement.prototype, "click").mockImplementation(() => undefined);
+    const clickSpy = vi
+      .spyOn(HTMLAnchorElement.prototype, "click")
+      .mockImplementation(() => undefined);
     const revokeSpy = vi.spyOn(URL, "revokeObjectURL").mockImplementation(() => undefined);
     const createObjectUrlSpy = vi
       .spyOn(URL, "createObjectURL")
@@ -169,7 +177,9 @@ describe("App flow", () => {
     render(<App />);
 
     fireEvent.click(screen.getByRole("button", { name: "More actions" }));
-    expect(screen.getByRole("menuitem", { name: "Export Transactions (.csv)" })).toBeInTheDocument();
+    expect(
+      screen.getByRole("menuitem", { name: "Export Transactions (.csv)" }),
+    ).toBeInTheDocument();
     expect(screen.getByRole("menuitem", { name: "Clear Local Data" })).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole("menuitem", { name: "Export Transactions (.csv)" }));
@@ -203,6 +213,8 @@ describe("App flow", () => {
       target: { files: [invalidFile] },
     });
 
-    expect(await screen.findByText("Please select a valid JSON snapshot file.")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Please select a valid JSON snapshot file."),
+    ).toBeInTheDocument();
   });
 });

@@ -1,4 +1,4 @@
-import type { ParsedCsvRow } from "./types";
+import type { ParsedCsvRow } from "src/utils/csv/types";
 
 export type Summary = {
   totalAmount: number;

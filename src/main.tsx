@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 
-import { registerOfflineServiceWorker } from "src/offline/registerServiceWorker";
+import { registerOfflineServiceWorker } from "src/utils/service-worker/registerServiceWorker";
 
 import App from "./App";
 import "./styles/global.css";

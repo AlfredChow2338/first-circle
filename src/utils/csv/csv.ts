@@ -1,9 +1,10 @@
 import Papa from "papaparse";
 import { z } from "zod";
 
-import { validateRow } from "./validation";
+import { validateRow } from "../validation";
 
 import type { ParsedCsvRow } from "./types";
+import { TransactionRecord } from "src/ui/TransactionTable/types";
 
 const EXPECTED_HEADERS = [
   "Transaction Date",
@@ -63,4 +64,23 @@ export function parseCsvText(csvText: string): ParsedCsvRow[] {
       errors,
     };
   });
+}
+
+export function handleExportTransactions(transactions: TransactionRecord[]) {
+  const csvContent = Papa.unparse(
+    transactions.map((transaction) => ({
+      "Transaction Date": transaction.transactionDate,
+      "Account Number": transaction.accountNumber,
+      "Account Holder Name": transaction.accountHolderName,
+      Amount: transaction.amount,
+    })),
+  );
+  const file = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(file);
+  const anchor = document.createElement("a");
+  const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+  anchor.href = url;
+  anchor.download = `transactions-v1-${timestamp}.csv`;
+  anchor.click();
+  URL.revokeObjectURL(url);
 }

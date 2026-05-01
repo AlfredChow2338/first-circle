@@ -1,9 +1,8 @@
 import { deleteDB, openDB, type DBSchema, type IDBPDatabase } from "idb";
 
-import type { TransactionRecord } from "src/domain/types";
+import type { TransactionRecord } from "src/ui/TransactionTable/types";
 
 import type { StorageValue } from "zustand/middleware";
-
 
 export const PERSIST_DB_NAME = "batch-transactions-db";
 export const PERSIST_DB_VERSION = 1;

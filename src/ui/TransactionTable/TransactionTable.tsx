@@ -1,10 +1,11 @@
 import { useState } from "react";
 
-import { STATUS_META } from "src/domain/status";
-import type { TransactionRecord } from "src/domain/types";
 import * as tableStyles from "src/styles/table.css";
 import { Button } from "src/ui/shared/Button";
 import { Table, type TableColumn } from "src/ui/shared/Table";
+
+import { STATUS_META } from "./config";
+import type { TransactionRecord } from "./types";
 
 type Props = {
   transactions: TransactionRecord[];

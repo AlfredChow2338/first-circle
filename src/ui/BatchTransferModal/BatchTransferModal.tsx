@@ -1,8 +1,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { useMemo } from "react";
 
-import { summarizeRows } from "src/domain/summary";
-import type { ParsedCsvRow } from "src/domain/types";
+import { summarizeRows } from "src/utils/summary";
+import type { ParsedCsvRow } from "src/utils/csv/types";
 import { APPROVERS, useBatchTransferStore } from "src/state/useBatchTransferStore";
 import { Button } from "src/ui/shared/Button";
 import { useMessage } from "src/ui/shared/message/MessageProvider";
@@ -44,7 +44,11 @@ export function BatchTransferModal() {
     () => [
       { id: "transactionDate", header: "Transaction Date", cell: (row) => row.transactionDate },
       { id: "accountNumber", header: "Account Number", cell: (row) => row.accountNumber },
-      { id: "accountHolderName", header: "Account Holder Name", cell: (row) => row.accountHolderName },
+      {
+        id: "accountHolderName",
+        header: "Account Holder Name",
+        cell: (row) => row.accountHolderName,
+      },
       { id: "amountRaw", header: "Amount", cell: (row) => row.amountRaw },
       { id: "errors", header: "Errors", cell: (row) => Object.values(row.errors).join(", ") },
     ],

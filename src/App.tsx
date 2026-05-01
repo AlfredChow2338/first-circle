@@ -1,15 +1,15 @@
-import Papa from "papaparse";
 import { useEffect, useRef, useState } from "react";
 
 import {
   OFFLINE_READY_EVENT,
   isOfflineReadyForCurrentPage,
-} from "src/offline/registerServiceWorker";
+} from "src/utils/service-worker/registerServiceWorker";
 import { useBatchTransferStore } from "src/state/useBatchTransferStore";
 import { BatchTransferModal } from "src/ui/BatchTransferModal";
 import { Button } from "src/ui/shared/Button";
 import { MessageProvider, useMessage } from "src/ui/shared/message/MessageProvider";
 import { TransactionTable } from "src/ui/TransactionTable";
+import { handleExportTransactions } from "src/utils/csv";
 
 import { appClassNames } from "./ui/config";
 
@@ -35,29 +35,10 @@ function AppContent() {
     };
   }, []);
 
-  function handleExportTransactions() {
-    const csvContent = Papa.unparse(
-      transactions.map((transaction) => ({
-        "Transaction Date": transaction.transactionDate,
-        "Account Number": transaction.accountNumber,
-        "Account Holder Name": transaction.accountHolderName,
-        Amount: transaction.amount,
-      })),
-    );
-    const file = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-    const url = URL.createObjectURL(file);
-    const anchor = document.createElement("a");
-    const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
-    anchor.href = url;
-    anchor.download = `transactions-v1-${timestamp}.csv`;
-    anchor.click();
-    URL.revokeObjectURL(url);
-    message.success("Exported transactions CSV.");
-  }
-
   function handleExportFromMenu() {
-    handleExportTransactions();
+    handleExportTransactions(transactions);
     setIsMoreMenuOpen(false);
+    message.success("Exported transactions CSV.");
   }
 
   async function handleClearLocalData() {

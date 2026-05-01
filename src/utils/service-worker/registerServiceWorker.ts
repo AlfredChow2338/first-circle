@@ -1,4 +1,5 @@
 export const OFFLINE_READY_EVENT = "offline-ready";
+
 const SERVICE_WORKER_URL = `${import.meta.env.BASE_URL}service-worker.js`;
 
 function isServiceWorkerSupported(): boolean {

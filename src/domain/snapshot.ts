@@ -1,7 +1,5 @@
 import { z } from "zod";
 
-import type { TransactionRecord, TransactionsSnapshotV1 } from "./types";
-
 const transactionSchema = z.object({
   transactionDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   accountNumber: z.string().regex(/^\d{3}-\d{9}-\d{2}$/),
@@ -18,7 +16,7 @@ const snapshotSchemaV1 = z.object({
   transactions: z.array(transactionSchema),
 });
 
-export function createSnapshot(transactions: TransactionRecord[]): TransactionsSnapshotV1 {
+export function createSnapshot(transactions: any) {
   return {
     version: 1,
     exportedAt: new Date().toISOString(),
@@ -27,7 +25,7 @@ export function createSnapshot(transactions: TransactionRecord[]): TransactionsS
   };
 }
 
-export function parseSnapshot(jsonText: string): TransactionsSnapshotV1 {
+export function parseSnapshot(jsonText: string) {
   let parsed: unknown;
   try {
     parsed = JSON.parse(jsonText);

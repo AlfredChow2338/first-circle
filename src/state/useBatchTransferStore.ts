@@ -1,10 +1,11 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
-import { parseCsvText } from "src/domain/csv";
+import { parseCsvText } from "src/utils/csv/csv";
 import { createSnapshot, parseSnapshot } from "src/domain/snapshot";
-import { summarizeRows } from "src/domain/summary";
-import type { ParsedCsvRow, TransactionRecord } from "src/domain/types";
+import { summarizeRows } from "src/utils/summary";
+import type { ParsedCsvRow } from "src/utils/csv/types";
+import type { TransactionRecord } from "src/ui/TransactionTable/types";
 import { createIndexedDbPersistStorage } from "src/storage/createIndexedDbPersistStorage";
 
 type Step = 1 | 2 | 3;
