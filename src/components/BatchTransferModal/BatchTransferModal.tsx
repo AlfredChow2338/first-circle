@@ -5,7 +5,7 @@ import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStor
 import { summarizeRows } from "src/utils/summary";
 import type { ParsedCsvRow } from "src/utils/csv/types";
 import { Button } from "src/components/shared/Button";
-import { useMessage } from "src/components/shared/message/MessageProvider";
+import { useMessage } from "src/components/shared/Message/MessageProvider";
 import { Table, type TableColumn } from "src/components/shared/Table";
 
 import { batchTransferModalClassNames } from "./config";

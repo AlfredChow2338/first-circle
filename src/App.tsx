@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useBatchTransferStore } from "src/store/useBatchTransferStore";
 import { BatchTransferModal } from "src/components/BatchTransferModal";
 import { Button } from "src/components/shared/Button";
-import { MessageProvider, useMessage } from "src/components/shared/message/MessageProvider";
+import { MessageProvider, useMessage } from "src/components/shared/Message/MessageProvider";
 import { TransactionTable } from "src/components/TransactionTable";
 import { handleExportTransactions } from "src/utils/csv";
 
