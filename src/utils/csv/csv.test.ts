@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import { parseCsvText } from "./csv";
+import { CSV_MAX_DATA_ROWS, CSV_TOO_MANY_ROWS_MESSAGE } from "./csvUploadLimits";
 
 describe("parseCsvText", () => {
   it("parses rows with expected header contract", () => {
@@ -28,6 +29,13 @@ describe("parseCsvText", () => {
       parseCsvText(`Transaction Date,Account Number,Account Holder Name,Amount
 2025-02-20,000-123456789-01,John Doe`),
     ).toThrow("CSV row 2 has invalid column count; expected 4");
+  });
+
+  it("rejects CSV with more than the maximum data rows", () => {
+    const header = "Transaction Date,Account Number,Account Holder Name,Amount\n";
+    const row = "2025-02-20,000-123456789-01,John Doe,100.00\n";
+    const csvText = header + row.repeat(CSV_MAX_DATA_ROWS + 1);
+    expect(() => parseCsvText(csvText)).toThrow(CSV_TOO_MANY_ROWS_MESSAGE);
   });
 
   it("captures validation errors from sample invalid rows", () => {

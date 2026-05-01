@@ -6,6 +6,7 @@ import { TransactionRecord } from "src/components/TransactionTable/types";
 
 import { validateRow } from "../validation";
 
+import { CSV_MAX_DATA_ROWS, CSV_TOO_MANY_ROWS_MESSAGE } from "./csvUploadLimits";
 import { sanitizeCsvTextFieldForExcel } from "./sanitizeCsvTextFieldForExcel";
 
 import type { ParsedCsvRow } from "./types";
@@ -42,6 +43,11 @@ export function parseCsvText(csvText: string): ParsedCsvRow[] {
   const headerValidation = HeaderSchema.safeParse(header);
   if (!headerValidation.success || header.length !== EXPECTED_HEADERS.length) {
     throw new Error("CSV header does not match expected schema");
+  }
+
+  const dataRowCount = rows.length - 1;
+  if (dataRowCount > CSV_MAX_DATA_ROWS) {
+    throw new Error(CSV_TOO_MANY_ROWS_MESSAGE);
   }
 
   return rows.slice(1).map((row, index) => {

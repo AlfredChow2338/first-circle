@@ -6,6 +6,7 @@ import { useMessage } from "src/components/shared/message/MessageProvider";
 import { Stepper } from "src/components/shared/Stepper";
 import { Table, type TableColumn } from "src/components/shared/Table";
 import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
+import { assertCsvFileSizeAllowed } from "src/utils/csv/csvUploadLimits";
 import {
   CSV_READ_TERMINAL_ERROR,
   readFileAsTextWithRetry,
@@ -85,6 +86,16 @@ export function BatchTransferModal() {
       setSelectedFileName("");
       setCsvContent("");
       setUploadError("Please upload a valid .csv file.");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      assertCsvFileSizeAllowed(file);
+    } catch (error) {
+      setSelectedFileName("");
+      setCsvContent("");
+      setUploadError(error instanceof Error ? error.message : "File is too large.");
       event.target.value = "";
       return;
     }
