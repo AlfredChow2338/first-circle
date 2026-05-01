@@ -5,7 +5,7 @@ import type { Key, ReactNode } from "react";
 export type TableColumn<T> = {
   id: string;
   header: ReactNode;
-  cell: (row: T) => ReactNode;
+  cell: (row: T, rowIndex: number) => ReactNode;
   cellClassName?: string;
 };
 
@@ -36,7 +36,7 @@ export function Table<T>({ data, columns, getRowKey }: TableProps<T>) {
                   key={column.id}
                   className={`${tableStyles.tableCell} ${column.cellClassName ?? ""}`.trim()}
                 >
-                  {column.cell(row)}
+                  {column.cell(row, rowIndex)}
                 </td>
               ))}
             </tr>

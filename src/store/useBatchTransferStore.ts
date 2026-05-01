@@ -7,6 +7,7 @@ import { mapParsedRowsToTransactions } from "src/store/batchTransfer/utils";
 import { parseCsvText } from "src/utils/csv/csv";
 import { createIndexedDbPersistStorage } from "src/utils/storage/createIndexedDbPersistStorage";
 import { summarizeRows } from "src/utils/summary";
+import { getTransactionKey } from "src/utils/transactions";
 
 export const useBatchTransferStore = create<BatchTransferState>()(
   persist(
@@ -49,6 +50,21 @@ export const useBatchTransferStore = create<BatchTransferState>()(
           transactions: [...state.transactions, ...newTransactions],
           isOpen: false,
           ...initialModalState,
+        }));
+      },
+      settleTransaction: (transactionKey) => {
+        set((state) => ({
+          transactions: state.transactions.map((transaction) => {
+            if (getTransactionKey(transaction) !== transactionKey || transaction.status !== "Pending") {
+              return transaction;
+            }
+
+            return {
+              ...transaction,
+              status: "Settled",
+              errorMessage: undefined,
+            };
+          }),
         }));
       },
       clearLocalData: async () => {

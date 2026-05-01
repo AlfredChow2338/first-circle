@@ -28,5 +28,6 @@ export type BatchTransferState = {
   setHasHydrated: (value: boolean) => void;
   parseCsv: () => void;
   confirmBatch: () => void;
+  settleTransaction: (transactionKey: string) => void;
   clearLocalData: () => Promise<void>;
 };

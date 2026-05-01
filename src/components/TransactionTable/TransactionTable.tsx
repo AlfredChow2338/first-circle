@@ -1,14 +1,19 @@
 import { useState } from "react";
 
-import * as tableStyles from "src/styles/table.css";
 import { Button } from "src/components/shared/Button";
 import { Table, type TableColumn } from "src/components/shared/Table";
+import * as tableStyles from "src/styles/table.css";
+import { getTransactionKey } from "src/utils/transactions";
 
 import { STATUS_META } from "./config";
+
 import type { TransactionRecord } from "./types";
 
 type Props = {
   transactions: TransactionRecord[];
+  onViewTransaction: (transaction: TransactionRecord) => void;
+  onSettleTransaction: (transaction: TransactionRecord) => void;
+  settlingTransactionKeys: Set<string>;
 };
 
 type FailedStatusCellProps = {
@@ -46,7 +51,12 @@ function FailedStatusCell({ color, errorMessage }: FailedStatusCellProps) {
   );
 }
 
-export function TransactionTable({ transactions }: Props) {
+export function TransactionTable({
+  transactions,
+  onViewTransaction,
+  onSettleTransaction,
+  settlingTransactionKeys,
+}: Props) {
   const columns: TableColumn<TransactionRecord>[] = [
     { id: "transactionDate", header: "Transaction Date", cell: (tx) => tx.transactionDate },
     { id: "accountNumber", header: "Account Number", cell: (tx) => tx.accountNumber },
@@ -62,6 +72,33 @@ export function TransactionTable({ transactions }: Props) {
           return <FailedStatusCell color={color} errorMessage={tx.errorMessage} />;
         }
         return <span style={{ color }}>{tx.status}</span>;
+      },
+    },
+    {
+      id: "actions",
+      header: "Actions",
+      cellClassName: tableStyles.actionsTableCell,
+      cell: (tx) => {
+        const transactionKey = getTransactionKey(tx);
+        const isSettling = settlingTransactionKeys.has(transactionKey);
+
+        return (
+          <div className={tableStyles.actionsInline}>
+            <Button size="small" variant="secondary" onClick={() => onViewTransaction(tx)}>
+              View
+            </Button>
+            {tx.status === "Pending" ? (
+              <Button
+                size="small"
+                variant="success"
+                disabled={isSettling}
+                onClick={() => onSettleTransaction(tx)}
+              >
+                {isSettling ? "Settling..." : "Settle"}
+              </Button>
+            ) : null}
+          </div>
+        );
       },
     },
   ];

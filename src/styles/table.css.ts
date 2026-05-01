@@ -123,3 +123,15 @@ export const statusTableCell = style({
   textOverflow: "clip",
   maxWidth: "none",
 });
+
+export const actionsTableCell = style({
+  overflow: "visible",
+  textOverflow: "clip",
+  maxWidth: "none",
+});
+
+export const actionsInline = style({
+  display: "inline-flex",
+  alignItems: "center",
+  gap: vars.space.sm,
+});

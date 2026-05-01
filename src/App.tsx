@@ -1,38 +1,35 @@
-import { useState } from "react";
-
-import { useBatchTransferStore } from "src/store/useBatchTransferStore";
 import { BatchTransferModal } from "src/components/BatchTransferModal";
 import { Button } from "src/components/shared/Button";
-import { MessageProvider, useMessage } from "src/components/shared/Message/MessageProvider";
+import { MessageProvider } from "src/components/shared/Message/MessageProvider";
+import { TransactionDetailModal } from "src/components/TransactionDetailModal";
 import { TransactionTable } from "src/components/TransactionTable";
-import { handleExportTransactions } from "src/utils/csv";
+import { useMoreMenuActions } from "src/hooks/useMoreMenuActions";
+import { useTransactionActions } from "src/hooks/useTransactionActions";
+import { useBatchTransferStore } from "src/store/useBatchTransferStore";
 
 import { appClassNames } from "./components/config";
 
 function AppContent() {
-  const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
-  const message = useMessage();
-
   const openModal = useBatchTransferStore((s) => s.openModal);
   const transactions = useBatchTransferStore((s) => s.transactions);
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
   const clearLocalData = useBatchTransferStore((s) => s.clearLocalData);
+  const settleTransaction = useBatchTransferStore((s) => s.settleTransaction);
+  const { isMoreMenuOpen, toggleMoreMenu, handleExportFromMenu, handleClearLocalData } =
+    useMoreMenuActions({
+      transactions,
+      clearLocalData,
+    });
 
-  function handleExportFromMenu() {
-    handleExportTransactions(transactions);
-    setIsMoreMenuOpen(false);
-    message.success("Exported transactions CSV.");
-  }
-
-  async function handleClearLocalData() {
-    const confirmed = window.confirm("Clear all locally saved transaction data?");
-    if (!confirmed) {
-      return;
-    }
-    await clearLocalData();
-    message.success("Cleared local transaction data.");
-    setIsMoreMenuOpen(false);
-  }
+  const {
+    selectedTransaction,
+    settlingTransactionKeys,
+    handleViewTransaction,
+    handleSettleTransaction,
+    handleTransactionDetailModalOpenChange,
+  } = useTransactionActions({
+    settleTransaction,
+  });
 
   return (
     <main>
@@ -45,7 +42,7 @@ function AppContent() {
             aria-label="More actions"
             aria-haspopup="menu"
             aria-expanded={isMoreMenuOpen}
-            onClick={() => setIsMoreMenuOpen((open) => !open)}
+            onClick={toggleMoreMenu}
           >
             &#8942;
           </Button>
@@ -72,7 +69,16 @@ function AppContent() {
         </div>
       </div>
       {!hasHydrated ? <p>Loading persisted transactions...</p> : null}
-      <TransactionTable transactions={transactions} />
+      <TransactionTable
+        transactions={transactions}
+        onViewTransaction={handleViewTransaction}
+        onSettleTransaction={(transaction) => void handleSettleTransaction(transaction)}
+        settlingTransactionKeys={settlingTransactionKeys}
+      />
+      <TransactionDetailModal
+        transaction={selectedTransaction}
+        onOpenChange={handleTransactionDetailModalOpenChange}
+      />
       <BatchTransferModal />
     </main>
   );
