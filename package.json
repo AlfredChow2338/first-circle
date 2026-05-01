@@ -12,12 +12,18 @@
     "lint": "eslint src --ext .ts,.tsx",
     "lint:fix": "eslint src --ext .ts,.tsx --fix",
     "format": "prettier --write .",
-    "format:check": "prettier --check ."
+    "format:check": "prettier --check .",
+    "audit": "pnpm audit --audit-level high"
   },
   "keywords": [],
   "author": "alfred",
   "license": "ISC",
   "packageManager": "pnpm@10.33.2",
+  "pnpm": {
+    "overrides": {
+      "serialize-javascript": ">=7.0.3"
+    }
+  },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
     "@radix-ui/react-tooltip": "^1.2.8",

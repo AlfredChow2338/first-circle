@@ -3,6 +3,10 @@ name: CI
 on:
   push:
   pull_request:
+  schedule:
+    # Weekly supply-chain check even when there are no pushes
+    - cron: "0 14 * * 1"
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -25,6 +29,9 @@ jobs:
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
+
+      - name: Dependency audit (supply chain)
+        run: pnpm audit --audit-level high
 
       - name: Lint
         run: pnpm lint
