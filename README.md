@@ -17,6 +17,19 @@
 - Each row must contain exactly 4 columns; malformed rows are rejected before Step 2.
 - Invalid file type or malformed structure shows inline validation error and blocks progression.
 
+### Persistence and Snapshot
+
+- Transactions are persisted in browser local storage under key: `batch-transactions-v1`.
+- Only durable transaction data is persisted; modal/transient state is not persisted.
+- Home page supports:
+  - `Export Transactions` -> downloads versioned JSON snapshot
+  - `Import Transactions` -> validates and replaces current transactions on success
+- Snapshot contract v1:
+  - `version: 1`
+  - `exportedAt` (ISO timestamp)
+  - `source: "first-circle-interview"`
+  - `transactions` array
+
 ### Goals
 
 - Deliver a complete three-step modal transfer workflow with bidirectional step navigation and no state loss.
@@ -65,3 +78,10 @@
 - Lint code: `pnpm lint`
 - Autofix lint issues: `pnpm lint:fix`
 - Recommended local sequence: `pnpm format && pnpm lint`
+
+### Local storage limitations and safeguards
+
+Limitation: browser storage quota can fail on very large datasets.
+Safeguard: keep persistence scoped to transaction data only; snapshot export provides backup path.
+Limitation: schema evolution across versions.
+Safeguard: versioned snapshot contract (version: 1) with strict validation and fail-fast behavior for unsupported payloads.

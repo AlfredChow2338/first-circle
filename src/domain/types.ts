@@ -25,3 +25,10 @@ export type ParsedCsvRow = {
   amount: number;
   errors: CsvRowValidation;
 };
+
+export type TransactionsSnapshotV1 = {
+  version: 1;
+  exportedAt: string;
+  source: "first-circle-interview";
+  transactions: TransactionRecord[];
+};

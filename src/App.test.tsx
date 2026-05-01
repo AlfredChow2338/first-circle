@@ -33,8 +33,10 @@ beforeEach(() => {
     approver: APPROVERS[0],
     selectedFileName: "",
     uploadError: null,
+    snapshotMessage: null,
     csvContent: "",
     parsedRows: [],
+    hasHydrated: true,
     transactions: [
       {
         transactionDate: "2025-02-20",

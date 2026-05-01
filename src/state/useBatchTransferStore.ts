@@ -1,6 +1,8 @@
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 import { parseCsvText } from "src/domain/csv";
+import { createSnapshot, parseSnapshot } from "src/domain/snapshot";
 import { summarizeRows } from "src/domain/summary";
 import type { ParsedCsvRow, TransactionRecord } from "src/domain/types";
 
@@ -13,9 +15,11 @@ type BatchTransferState = {
   approver: string;
   selectedFileName: string;
   uploadError: string | null;
+  snapshotMessage: string | null;
   csvContent: string;
   parsedRows: ParsedCsvRow[];
   transactions: TransactionRecord[];
+  hasHydrated: boolean;
   openModal: () => void;
   closeModal: () => void;
   nextStep: () => void;
@@ -24,7 +28,11 @@ type BatchTransferState = {
   setApprover: (value: string) => void;
   setSelectedFileName: (value: string) => void;
   setUploadError: (value: string | null) => void;
+  setSnapshotMessage: (value: string | null) => void;
   setCsvContent: (value: string) => void;
+  setHasHydrated: (value: boolean) => void;
+  exportSnapshot: () => string;
+  importSnapshot: (jsonText: string) => void;
   parseCsv: () => void;
   confirmBatch: () => void;
 };
@@ -62,55 +70,82 @@ const initialModalState = {
   approver: APPROVERS[0],
   selectedFileName: "",
   uploadError: null as string | null,
+  snapshotMessage: null as string | null,
   csvContent: "",
   parsedRows: [] as ParsedCsvRow[],
 };
 
-export const useBatchTransferStore = create<BatchTransferState>((set, get) => ({
-  isOpen: false,
-  step: 1,
-  batchName: "",
-  approver: APPROVERS[0],
-  selectedFileName: "",
-  uploadError: null,
-  csvContent: "",
-  parsedRows: [],
-  transactions: initialTransactions,
-  openModal: () => set({ isOpen: true, step: 1 }),
-  closeModal: () =>
-    set({
+export const useBatchTransferStore = create<BatchTransferState>()(
+  persist(
+    (set, get) => ({
       isOpen: false,
-      ...initialModalState,
+      step: 1,
+      batchName: "",
+      approver: APPROVERS[0],
+      selectedFileName: "",
+      uploadError: null,
+      snapshotMessage: null,
+      csvContent: "",
+      parsedRows: [],
+      transactions: initialTransactions,
+      hasHydrated: false,
+      openModal: () => set({ isOpen: true, step: 1 }),
+      closeModal: () =>
+        set({
+          isOpen: false,
+          ...initialModalState,
+        }),
+      nextStep: () => set((state) => ({ step: Math.min(3, state.step + 1) as Step })),
+      prevStep: () => set((state) => ({ step: Math.max(1, state.step - 1) as Step })),
+      setBatchName: (value) => set({ batchName: value }),
+      setApprover: (value) => set({ approver: value }),
+      setSelectedFileName: (value) => set({ selectedFileName: value }),
+      setUploadError: (value) => set({ uploadError: value }),
+      setSnapshotMessage: (value) => set({ snapshotMessage: value }),
+      setCsvContent: (value) => set({ csvContent: value }),
+      setHasHydrated: (value) => set({ hasHydrated: value }),
+      exportSnapshot: () => JSON.stringify(createSnapshot(get().transactions), null, 2),
+      importSnapshot: (jsonText) => {
+        const snapshot = parseSnapshot(jsonText);
+        set({
+          transactions: snapshot.transactions,
+          snapshotMessage: `Imported ${snapshot.transactions.length} transaction(s) successfully.`,
+        });
+      },
+      parseCsv: () => {
+        const parsedRows = parseCsvText(get().csvContent);
+        set({ parsedRows, uploadError: null });
+      },
+      confirmBatch: () => {
+        const { parsedRows } = get();
+        const newTransactions = parsedRows.map((row) => {
+          const hasErrors = Object.keys(row.errors).length > 0;
+          return {
+            transactionDate: row.transactionDate,
+            accountNumber: row.accountNumber,
+            accountHolderName: row.accountHolderName,
+            amount: row.amount,
+            status: hasErrors ? "Failed" : "Pending",
+            errorMessage: hasErrors ? Object.values(row.errors).join(", ") : undefined,
+          } as TransactionRecord;
+        });
+        summarizeRows(parsedRows);
+        set((state) => ({
+          transactions: [...state.transactions, ...newTransactions],
+          isOpen: false,
+          ...initialModalState,
+        }));
+      },
     }),
-  nextStep: () => set((state) => ({ step: Math.min(3, state.step + 1) as Step })),
-  prevStep: () => set((state) => ({ step: Math.max(1, state.step - 1) as Step })),
-  setBatchName: (value) => set({ batchName: value }),
-  setApprover: (value) => set({ approver: value }),
-  setSelectedFileName: (value) => set({ selectedFileName: value }),
-  setUploadError: (value) => set({ uploadError: value }),
-  setCsvContent: (value) => set({ csvContent: value }),
-  parseCsv: () => {
-    const parsedRows = parseCsvText(get().csvContent);
-    set({ parsedRows, uploadError: null });
-  },
-  confirmBatch: () => {
-    const { parsedRows } = get();
-    const newTransactions = parsedRows.map((row) => {
-      const hasErrors = Object.keys(row.errors).length > 0;
-      return {
-        transactionDate: row.transactionDate,
-        accountNumber: row.accountNumber,
-        accountHolderName: row.accountHolderName,
-        amount: row.amount,
-        status: hasErrors ? "Failed" : "Pending",
-        errorMessage: hasErrors ? Object.values(row.errors).join(", ") : undefined,
-      } as TransactionRecord;
-    });
-    summarizeRows(parsedRows);
-    set((state) => ({
-      transactions: [...state.transactions, ...newTransactions],
-      isOpen: false,
-      ...initialModalState,
-    }));
-  },
-}));
+    {
+      name: "batch-transactions-v1",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        transactions: state.transactions,
+      }),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true);
+      },
+    },
+  ),
+);
