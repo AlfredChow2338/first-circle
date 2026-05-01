@@ -8,27 +8,21 @@
 - Computed summary metrics
 - Adding uploaded transactions into the home-page table without backend integration
 
+### Goals
+
+- Deliver a complete three-step modal transfer workflow with bidirectional step navigation and no state loss.
+- Ensure CSV parsing and validation logic are isolated in pure domain functions and fully testable.
+- Ensure UI behavior is covered through component/integration tests for table rendering, tooltip behavior, and step transitions.
+- Define coding rules and skill usage guidance that keep implementation consistent and reviewable.
+- Define a Claude Code assisted loop that accelerates development while preserving TDD discipline.
+
 ### CSV Upload Rules
 
-- Step 1 uses file upload only (no freeform CSV textarea input).
 - Only `.csv` files are accepted.
 - CSV must use exact header order:
   - `Transaction Date,Account Number,Account Holder Name,Amount`
 - Each row must contain exactly 4 columns; malformed rows are rejected before Step 2.
 - Invalid file type or malformed structure shows inline validation error and blocks progression.
-
-### Persistence and Snapshot
-
-- Transactions are persisted in **IndexedDB** (database `batch-transactions-db`, object store `zustand-persist`, persist name `batch-transactions-v1`).
-- Only durable transaction data is persisted; modal/transient state is not persisted.
-- Home page supports:
-  - `Export Transactions` -> downloads versioned JSON snapshot
-  - `Import Transactions` -> validates and replaces current transactions on success
-- Snapshot contract v1:
-  - `version: 1`
-  - `exportedAt` (ISO timestamp)
-  - `source: "first-circle-interview"`
-  - `transactions` array
 
 ### Offline Support
 
@@ -39,45 +33,49 @@
   - `Offline mode not ready yet.` before the page is controlled by the active service worker.
   - `Offline mode ready.` once service worker control is active.
 
-### Offline Verification
+### Tech stack (React and TypeScript friendly)
 
-- Build and preview production output:
-  - `pnpm build`
-  - `pnpm preview`
-- Open the app once while online, then switch DevTools network to **Offline** and reload.
-- Confirm:
-  - The app shell still renders.
-  - Existing transactions are hydrated from IndexedDB.
-  - Snapshot export/import behavior remains unchanged.
-
-### Goals
-
-- Deliver a complete three-step modal transfer workflow with bidirectional step navigation and no state loss.
-- Ensure CSV parsing and validation logic are isolated in pure domain functions and fully testable.
-- Ensure UI behavior is covered through component/integration tests for table rendering, tooltip behavior, and step transitions.
-- Define coding rules and skill usage guidance that keep implementation consistent and reviewable.
-- Define a Claude Code assisted loop that accelerates development while preserving TDD discipline.
-
-### Architecture
-
-- View: UI Components for visualisation.
-
-- Domain: Business logic such as parse, validate and summarize. Separate to improve testability and allows TDD from pure functions before UI wiring.
-
-- State Orchestration: Steppers and session data.
-
-### Tech stack (TS-friendly)
-
-- React 19
 - @tanstack/react-table
+  - ✅ Headless architecture gives full UI control while keeping powerful table logic (sorting/filtering/pagination).
+  - ✅ Excellent TypeScript support for strongly-typed columns and cells.
+  - ✅ Performs well for complex data tables and scales with feature growth.
+
 - react-hook-form
+  - ✅ Minimal re-renders via uncontrolled inputs, so forms stay fast.
+  - ✅ Great DX with simple APIs and clean validation/error handling.
+  - ✅ Easy integration with schema validators (like zod) and custom inputs.
+
 - zod
+  - ✅ Runtime validation + static TypeScript inference from one schema source.
+  - ✅ Clear, composable schemas that are easy to maintain and reuse.
+  - ✅ Safer parsing with predictable error structures for UI messaging.
+
 - papaparse
+  - ✅ Mature CSV parser with robust handling of edge cases (quotes, delimiters, malformed rows).
+  - ✅ Browser-friendly and fast for client-side parsing.
+  - ✅ Supports step/chunk parsing patterns for larger files.
 - zustnd
+  - ✅ Lightweight state management with low boilerplate and readable store patterns.
+  - ✅ Flexible: simple local state up to app-wide state, with middleware support (persist, etc.).
+  - ✅ Works very well with React hooks and TypeScript.
 - Radix dialog/tooltip
+  - ✅ Accessibility-first primitives (keyboard navigation, focus management, ARIA behavior).
+  - ✅ Unstyled components let you keep your own design system.
+  - ✅ Reliable behavior for tricky UI interactions across browsers.
 - Vitest
+  - ✅ Very fast test runs with Vite-native integration.
+  - ✅ Jest-like API makes adoption easy.
+  - ✅ Good TypeScript and ESM support out of the box.
+
 - Reat Testing Library (RTL)
+  - ✅ Encourages user-centric testing (interactions and visible behavior over internals).
+  - ✅ Produces more resilient tests during refactors.
+  - ✅ Great ecosystem integration (jest-dom, user-event) for realistic UI testing.
+
 - IDB (IndexedDB)
+  - ✅ Much cleaner promise-based API over raw IndexedDB.
+  - ✅ Great for larger client-side persistence than localStorage.
+  - ✅ Supports structured object storage and transactional semantics for safer data operations.
 
 - vanilla-extract/css
   - ✅ Type-safe - ClassNames are typed and autocompleted
