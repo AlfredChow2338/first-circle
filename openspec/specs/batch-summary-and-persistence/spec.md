@@ -15,8 +15,12 @@ The system SHALL compute total amount as the sum of transaction amounts, number 
 - **THEN** the displayed total, count, and average match deterministic calculation results
 
 ### Requirement: Append uploaded transactions to home-page data source
-The system SHALL persist uploaded transaction records to the current application data source (in-memory or local file-backed) and make them visible on the home-page table after completion.
+The system SHALL persist uploaded transaction records to durable client-side storage and make them visible on the home-page table after completion and across page reload.
 
 #### Scenario: Complete batch transfer and update home page
 - **WHEN** the user confirms the batch transfer in the modal flow
 - **THEN** uploaded transactions are added to the existing home-page transaction list
+
+#### Scenario: Preserve transactions after application reload
+- **WHEN** transactions have been previously added and the user reloads the page
+- **THEN** the home-page transaction table is hydrated from persisted client-side storage with the same transaction dataset
