@@ -74,6 +74,7 @@ describe("App flow", () => {
   it("opens modal and preserves state across steps", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
+    await screen.findByRole("dialog", { name: "Batch Transfer" });
     const stepper = screen.getByRole("list", { name: "Batch transfer progress" });
     expect(stepper.querySelector('li[data-state="active"]')).toHaveTextContent("Transfer Details");
 
@@ -104,6 +105,7 @@ describe("App flow", () => {
   it("shows upload error for non-csv files", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
+    await screen.findByLabelText("CSV File Upload");
     const textFile = new File(["not,csv"], "invalid.txt", { type: "text/plain" });
     fireEvent.change(screen.getByLabelText("CSV File Upload"), { target: { files: [textFile] } });
     expect(await screen.findByRole("alert")).toHaveTextContent("Please upload a valid .csv file.");
@@ -138,6 +140,7 @@ describe("App flow", () => {
   it("clears modal state when closed from cross icon", async () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
+    await screen.findByLabelText("Batch Transfer Name");
     fireEvent.change(screen.getByLabelText("Batch Transfer Name"), {
       target: { value: "To Be Cleared" },
     });

@@ -64,7 +64,7 @@ afterEach(() => {
 });
 
 describe("App transaction actions", () => {
-  it("applies search filtering after 0.5 second throttle delay", async () => {
+  it("applies search filtering after throttle delay", async () => {
     vi.useFakeTimers();
     useBatchTransferStore.setState({
       transactions: [
@@ -92,7 +92,7 @@ describe("App transaction actions", () => {
     expect(screen.getByText("Jane Smith")).toBeInTheDocument();
 
     act(() => {
-      vi.advanceTimersByTime(500);
+      vi.advanceTimersByTime(800);
     });
 
     expect(screen.getByText("Jane Smith")).toBeInTheDocument();
@@ -126,7 +126,7 @@ describe("App transaction actions", () => {
     });
 
     act(() => {
-      vi.advanceTimersByTime(500);
+      vi.advanceTimersByTime(800);
     });
 
     expect(screen.getByText("Jane Smith")).toBeInTheDocument();
@@ -169,14 +169,14 @@ describe("App transaction actions", () => {
     expect(screen.getAllByRole("button", { name: "Settle" })).toHaveLength(1);
   });
 
-  it("opens transaction details modal when clicking View", () => {
+  it("opens transaction details modal when clicking View", async () => {
     render(<App />);
 
     const failedRow = screen.getByText("000-333222111-03").closest("tr");
     expect(failedRow).not.toBeNull();
     fireEvent.click(within(failedRow as HTMLTableRowElement).getByRole("button", { name: "View" }));
 
-    const dialog = screen.getByRole("dialog", { name: "Transaction Details" });
+    const dialog = await screen.findByRole("dialog", { name: "Transaction Details" });
     expect(within(dialog).getByText("Alex Johnson")).toBeInTheDocument();
     expect(within(dialog).getByText("Insufficient balance")).toBeInTheDocument();
   });

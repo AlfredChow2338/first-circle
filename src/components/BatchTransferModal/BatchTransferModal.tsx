@@ -6,7 +6,10 @@ import { useMessage } from "src/components/shared/Message/MessageProvider";
 import { Stepper } from "src/components/shared/Stepper";
 import { Table, type TableColumn } from "src/components/shared/Table";
 import { APPROVERS, useBatchTransferStore } from "src/store/useBatchTransferStore";
-import { CSV_READ_TERMINAL_ERROR, readFileAsTextWithRetry } from "src/utils/csv/readFileAsTextWithRetry";
+import {
+  CSV_READ_TERMINAL_ERROR,
+  readFileAsTextWithRetry,
+} from "src/utils/csv/readFileAsTextWithRetry";
 import type { ParsedCsvRow } from "src/utils/csv/types";
 import { summarizeRows } from "src/utils/summary";
 
@@ -101,6 +104,7 @@ export function BatchTransferModal() {
       setSelectedFileName(file.name);
       setCsvContent(text);
     } catch {
+      // Rollback
       setCsvReadStatus(null);
       setSelectedFileName("");
       setCsvContent("");

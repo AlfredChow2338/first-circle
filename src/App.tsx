@@ -1,7 +1,7 @@
-import { BatchTransferModal } from "src/components/BatchTransferModal";
+import { lazy, Suspense } from "react";
+
 import { Button } from "src/components/shared/Button";
 import { MessageProvider } from "src/components/shared/Message/MessageProvider";
-import { TransactionDetailModal } from "src/components/TransactionDetailModal";
 import { TransactionTable } from "src/components/TransactionTable";
 import { useMoreMenuActions } from "src/hooks/useMoreMenuActions";
 import { useTransactionActions } from "src/hooks/useTransactionActions";
@@ -10,8 +10,19 @@ import { useBatchTransferStore } from "src/store/useBatchTransferStore";
 
 import { appClassNames } from "./components/config";
 
+const BatchTransferModal = lazy(() =>
+  import("src/components/BatchTransferModal").then((m) => ({ default: m.BatchTransferModal })),
+);
+
+const TransactionDetailModal = lazy(() =>
+  import("src/components/TransactionDetailModal").then((m) => ({
+    default: m.TransactionDetailModal,
+  })),
+);
+
 function AppContent() {
   const openModal = useBatchTransferStore((s) => s.openModal);
+  const isBatchModalOpen = useBatchTransferStore((s) => s.isOpen);
   const transactions = useBatchTransferStore((s) => s.transactions);
   const hasHydrated = useBatchTransferStore((s) => s.hasHydrated);
   const clearLocalData = useBatchTransferStore((s) => s.clearLocalData);
@@ -37,7 +48,7 @@ function AppContent() {
     <main>
       <h1>Batch Transaction Processing System</h1>
       <div className={appClassNames.buttonWrapper}>
-        <Button onClick={openModal}>Upload Transaction (.csv)</Button>
+        <Button onClick={openModal}>Upload Transaction</Button>
         <div className={appClassNames.moreMenuWrapper}>
           <Button
             variant="secondary"
@@ -56,7 +67,7 @@ function AppContent() {
                 className={appClassNames.moreMenuItemButton}
                 onClick={handleExportFromMenu}
               >
-                Export Transactions (.csv)
+                Export Transactions
               </Button>
               <Button
                 role="menuitem"
@@ -84,11 +95,19 @@ function AppContent() {
         onSettleTransaction={(transaction) => void handleSettleTransaction(transaction)}
         settlingTransactionKeys={settlingTransactionKeys}
       />
-      <TransactionDetailModal
-        transaction={selectedTransaction}
-        onOpenChange={handleTransactionDetailModalOpenChange}
-      />
-      <BatchTransferModal />
+      {selectedTransaction ? (
+        <Suspense fallback={null}>
+          <TransactionDetailModal
+            transaction={selectedTransaction}
+            onOpenChange={handleTransactionDetailModalOpenChange}
+          />
+        </Suspense>
+      ) : null}
+      {isBatchModalOpen ? (
+        <Suspense fallback={null}>
+          <BatchTransferModal />
+        </Suspense>
+      ) : null}
     </main>
   );
 }
