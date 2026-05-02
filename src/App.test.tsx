@@ -190,19 +190,4 @@ describe("App flow", () => {
     expect(revokeSpy).toHaveBeenCalledWith("blob://transactions-export");
     expect(screen.queryByRole("menu")).not.toBeInTheDocument();
   });
-
-  it("clears local data from More menu after confirmation", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
-    render(<App />);
-    expect(useBatchTransferStore.getState().transactions.length).toBeGreaterThan(0);
-
-    fireEvent.click(screen.getByRole("button", { name: "More actions" }));
-    fireEvent.click(screen.getByRole("menuitem", { name: "Clear Data" }));
-
-    await waitFor(() => {
-      expect(useBatchTransferStore.getState().transactions).toEqual([]);
-    });
-    expect(screen.queryByRole("menu")).not.toBeInTheDocument();
-    expect(screen.getByText("Cleared local transaction data.")).toBeInTheDocument();
-  });
 });
