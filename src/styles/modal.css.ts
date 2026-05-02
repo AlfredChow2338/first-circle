@@ -49,11 +49,18 @@ export const modalContent = style({
       top: 0,
       left: 0,
       transform: "none",
-      width: "100vw",
-      maxWidth: "100vw",
-      height: "100vh",
-      maxHeight: "100vh",
+      width: "100%",
+      maxWidth: "100%",
+      /* `100vh` runs under Chrome’s bottom toolbar; `100dvh` tracks the visible viewport. */
+      height: "100dvh",
+      maxHeight: "100dvh",
+      minHeight: "100dvh",
       borderRadius: 0,
+      boxSizing: "border-box",
+      /* Toolbar + home indicator: `100vh` safe-area is often 0 on Android; keep generous bottom inset. */
+      paddingBottom: "max(5rem, calc(2.5rem + env(safe-area-inset-bottom, 0px)))",
+      /* `slideIn` animates `transform` and overrides `transform: none`, breaking fullscreen layout. */
+      animation: `${fadeIn} 0.2s ease-out`,
     },
   },
 });

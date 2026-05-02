@@ -13,7 +13,7 @@ globalStyle("body", {
   background: `linear-gradient(135deg, ${vars.color.darkBg} 0%, #0f1420 100%)`,
   color: vars.color.textPrimary,
   lineHeight: 1.6,
-  minHeight: "100vh",
+  minHeight: "100dvh",
   WebkitFontSmoothing: "antialiased",
   MozOsxFontSmoothing: "grayscale",
 });
