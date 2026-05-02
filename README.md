@@ -11,7 +11,7 @@ Demo URL: https://alfredchow2338.github.io/first-circle/
 
 ### Web Engineering Practices
 
-1. ✅ OfflService Worker & Offline-First Architecture (PWA)
+1. ✅ Service Worker & Offline-First Architecture (PWA)
 2. ✅ IndexedDB caching for persisted transactions during hydration
 3. ✅ Web Worker for Main Thread Offloading to prevent UI jank
 4. ✅ Search Input Throttling
