@@ -5,7 +5,6 @@ import { gzipSync } from "node:zlib";
 import babel from "@rolldown/plugin-babel";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { vanillaExtractPlugin } from "@vanilla-extract/vite-plugin";
-import { beasties } from "vite-plugin-beasties";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig, type Plugin } from "vite";
 
@@ -74,13 +73,6 @@ export default defineConfig(async () => ({
       },
     }),
     securityMetaTagsPlugin(),
-    beasties({
-      options: {
-        preload: "swap",
-        /* `true` triggers beasties `writeFile` to `dist` during `transformIndexHtml` before emit → ENOENT. */
-        pruneSource: false,
-      },
-    }),
     gzipStaticAssets(),
   ],
   resolve: {

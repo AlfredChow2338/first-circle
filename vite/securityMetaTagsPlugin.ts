@@ -15,8 +15,7 @@ const CSP = [
   "form-action 'self'",
   "object-src 'none'",
   "script-src 'self'",
-  /* Beasties inlines critical CSS as a `<style>` block; `'self'` alone blocks it. */
-  "style-src 'self' 'unsafe-inline'",
+  "style-src 'self'",
   "img-src 'self' data: blob:",
   "font-src 'self'",
   "connect-src 'self'",

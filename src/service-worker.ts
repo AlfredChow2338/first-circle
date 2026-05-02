@@ -1,4 +1,5 @@
 /// <reference lib="webworker" />
+/// <reference types="vite/client" />
 
 import {
   cleanupOutdatedCaches,
@@ -27,7 +28,13 @@ registerRoute(
   }),
 );
 
-registerRoute(new NavigationRoute(createHandlerBoundToURL("/index.html")));
+/** Must match precached `index.html` URL (includes Vite `base`, e.g. `/repo/` on GitHub Pages). */
+const precachedIndexUrl = new URL(
+  "index.html",
+  `${self.location.origin}${import.meta.env.BASE_URL}`,
+).href;
+
+registerRoute(new NavigationRoute(createHandlerBoundToURL(precachedIndexUrl)));
 
 self.addEventListener("message", (event) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
