@@ -1,6 +1,8 @@
 export type TransactionStatus = "Pending" | "Settled" | "Failed";
 
 export type TransactionRecord = {
+  /** Unique per row so duplicate uploads / identical fields do not share one identity. */
+  id?: string;
   transactionDate: string;
   accountNumber: string;
   accountHolderName: string;

@@ -1,12 +1,17 @@
 import { create } from "zustand";
 import { persist } from "zustand/middleware";
 
+import type { TransactionRecord } from "src/components/TransactionTable/types";
 import { APPROVERS, initialModalState, PERSIST_KEY } from "src/store/batchTransfer/constants";
 import type { BatchTransferState, Step } from "src/store/batchTransfer/types";
 import { parseCsvText } from "src/utils/csv/csv";
 import { createIndexedDbPersistStorage } from "src/utils/storage/createIndexedDbPersistStorage";
-import { getTransactionKey } from "src/utils/transactions";
+import { createTransactionRowId, getTransactionKey } from "src/utils/transactions";
 import { runBatchConfirmComputation } from "src/utils/web-worker/runBatchConfirmComputation";
+
+function ensureTransactionIds(transactions: TransactionRecord[]): TransactionRecord[] {
+  return transactions.map((row) => (row.id ? row : { ...row, id: createTransactionRowId() }));
+}
 
 export const useBatchTransferStore = create<BatchTransferState>()(
   persist(
@@ -87,6 +92,16 @@ export const useBatchTransferStore = create<BatchTransferState>()(
       partialize: (state) => ({
         transactions: state.transactions,
       }),
+      merge: (persistedState, currentState) => {
+        const partial = (persistedState ?? {}) as Partial<BatchTransferState>;
+        return {
+          ...currentState,
+          ...partial,
+          transactions: ensureTransactionIds(
+            partial.transactions !== undefined ? partial.transactions : currentState.transactions,
+          ),
+        };
+      },
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true);
       },

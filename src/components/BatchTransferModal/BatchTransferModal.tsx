@@ -125,6 +125,10 @@ export function BatchTransferModal() {
   }
 
   function handleNextFromStepOne() {
+    if (!batchName.trim()) {
+      setUploadError("Please enter a batch transfer name.");
+      return;
+    }
     if (!selectedFileName || !csvContent.trim()) {
       setUploadError("Please upload a CSV file before continuing.");
       return;
@@ -165,66 +169,76 @@ export function BatchTransferModal() {
           <Stepper steps={steps} activeStep={step} ariaLabel="Batch transfer progress" />
           {step === 1 && (
             <section>
-              <label>
-                Batch Transfer Name
-                <input
-                  aria-label="Batch Transfer Name"
-                  value={batchName}
-                  onChange={(e) => setBatchName(e.target.value)}
-                />
-              </label>
-              <label>
-                CSV File Upload
-                <div className={batchTransferModalClassNames.fileUploadWrapper}>
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  handleNextFromStepOne();
+                }}
+              >
+                <label>
+                  Batch Transfer Name
                   <input
-                    id="csv-file-upload"
-                    aria-label="CSV File Upload"
-                    type="file"
-                    accept=".csv,text/csv"
-                    className={batchTransferModalClassNames.fileUploadInput}
-                    onChange={(event) => {
-                      void handleFileChange(event);
-                    }}
+                    type="text"
+                    aria-label="Batch Transfer Name"
+                    aria-required
+                    required
+                    value={batchName}
+                    onChange={(e) => setBatchName(e.target.value)}
                   />
-                  <label
-                    htmlFor="csv-file-upload"
-                    className={batchTransferModalClassNames.fileUploadLabel}
+                </label>
+                <label>
+                  CSV File Upload
+                  <div className={batchTransferModalClassNames.fileUploadWrapper}>
+                    <input
+                      id="csv-file-upload"
+                      aria-label="CSV File Upload"
+                      type="file"
+                      accept=".csv,text/csv"
+                      className={batchTransferModalClassNames.fileUploadInput}
+                      onChange={(event) => {
+                        void handleFileChange(event);
+                      }}
+                    />
+                    <label
+                      htmlFor="csv-file-upload"
+                      className={batchTransferModalClassNames.fileUploadLabel}
+                    >
+                      <span className={batchTransferModalClassNames.fileUploadIcon}>📁</span>
+                      <span>{selectedFileName || "Choose CSV file or drag and drop"}</span>
+                    </label>
+                  </div>
+                </label>
+                {selectedFileName ? (
+                  <div className={batchTransferModalClassNames.uploadMeta}>
+                    Selected file: {selectedFileName}
+                  </div>
+                ) : null}
+                {csvReadStatus ? (
+                  <div aria-live="polite" className={batchTransferModalClassNames.uploadMeta}>
+                    {csvReadStatus}
+                  </div>
+                ) : null}
+                {uploadError ? (
+                  <div role="alert" className={batchTransferModalClassNames.uploadError}>
+                    {uploadError}
+                  </div>
+                ) : null}
+                <label>
+                  Approver Selection
+                  <select
+                    aria-label="Approver Selection"
+                    value={approver}
+                    onChange={(e) => setApprover(e.target.value)}
                   >
-                    <span className={batchTransferModalClassNames.fileUploadIcon}>📁</span>
-                    <span>{selectedFileName || "Choose CSV file or drag and drop"}</span>
-                  </label>
-                </div>
-              </label>
-              {selectedFileName ? (
-                <div className={batchTransferModalClassNames.uploadMeta}>
-                  Selected file: {selectedFileName}
-                </div>
-              ) : null}
-              {csvReadStatus ? (
-                <div aria-live="polite" className={batchTransferModalClassNames.uploadMeta}>
-                  {csvReadStatus}
-                </div>
-              ) : null}
-              {uploadError ? (
-                <div role="alert" className={batchTransferModalClassNames.uploadError}>
-                  {uploadError}
-                </div>
-              ) : null}
-              <label>
-                Approver Selection
-                <select
-                  aria-label="Approver Selection"
-                  value={approver}
-                  onChange={(e) => setApprover(e.target.value)}
-                >
-                  {APPROVERS.map((item) => (
-                    <option value={item} key={item}>
-                      {item}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <Button onClick={handleNextFromStepOne}>Next</Button>
+                    {APPROVERS.map((item) => (
+                      <option value={item} key={item}>
+                        {item}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <Button type="submit">Next</Button>
+              </form>
             </section>
           )}
           {step === 2 && (

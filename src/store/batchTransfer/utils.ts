@@ -2,6 +2,7 @@ import type { TransactionRecord } from "src/components/TransactionTable/types";
 import type { ParsedCsvRow } from "src/utils/csv/types";
 import { summarizeRows } from "src/utils/summary";
 import type { Summary } from "src/utils/summary/summary";
+import { createTransactionRowId } from "src/utils/transactions";
 
 export type BatchConfirmComputationResult = {
   transactions: TransactionRecord[];
@@ -12,6 +13,7 @@ export function mapParsedRowsToTransactions(parsedRows: ParsedCsvRow[]): Transac
   return parsedRows.map((row) => {
     const hasErrors = Object.keys(row.errors).length > 0;
     return {
+      id: createTransactionRowId(),
       transactionDate: row.transactionDate,
       accountNumber: row.accountNumber,
       accountHolderName: row.accountHolderName,

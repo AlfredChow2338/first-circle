@@ -13,6 +13,7 @@ vi.mock("src/utils/web-worker/runBatchConfirmComputation", () => ({
   runBatchConfirmComputation: vi.fn(async () => ({
     transactions: [
       {
+        id: "mock-confirm-tx-1",
         transactionDate: "2025-06-01",
         accountNumber: "000-100200300-01",
         accountHolderName: "Pat Lee",
@@ -64,7 +65,10 @@ describe("useBatchTransferStore snapshot persistence", () => {
     await (
       useBatchTransferStore as unknown as { persist: { rehydrate: () => Promise<void> } }
     ).persist.rehydrate();
-    expect(useBatchTransferStore.getState().transactions).toEqual(persistedTransactions);
+    const rows = useBatchTransferStore.getState().transactions;
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject(persistedTransactions[0]);
+    expect(rows[0].id).toBeDefined();
     expect(useBatchTransferStore.getState().hasHydrated).toBe(true);
   });
 
@@ -93,7 +97,10 @@ describe("useBatchTransferStore snapshot persistence", () => {
       useBatchTransferStore as unknown as { persist: { rehydrate: () => Promise<void> } }
     ).persist.rehydrate();
 
-    expect(useBatchTransferStore.getState().transactions).toEqual(persistedTransactions);
+    const rows = useBatchTransferStore.getState().transactions;
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject(persistedTransactions[0]);
+    expect(rows[0].id).toBeDefined();
     expect(useBatchTransferStore.getState().hasHydrated).toBe(true);
   });
 
@@ -144,9 +151,39 @@ describe("confirmBatch", () => {
     const rows = useBatchTransferStore.getState().transactions;
     expect(rows).toHaveLength(1);
     expect(rows[0]).toMatchObject({
+      id: "mock-confirm-tx-1",
       batchName: "June payout",
       approver: "Alex Approver",
       transactionDate: "2025-06-01",
     });
+  });
+
+  it("settles only the row whose id matches, even when duplicate uploads share the same fields", () => {
+    useBatchTransferStore.setState({
+      transactions: [
+        {
+          id: "dup-a",
+          transactionDate: "2025-01-01",
+          accountNumber: "000-1",
+          accountHolderName: "Same",
+          amount: 1,
+          status: "Pending",
+        },
+        {
+          id: "dup-b",
+          transactionDate: "2025-01-01",
+          accountNumber: "000-1",
+          accountHolderName: "Same",
+          amount: 1,
+          status: "Pending",
+        },
+      ],
+      hasHydrated: true,
+    });
+
+    useBatchTransferStore.getState().settleTransaction("dup-a");
+    const [first, second] = useBatchTransferStore.getState().transactions;
+    expect(first.status).toBe("Settled");
+    expect(second.status).toBe("Pending");
   });
 });

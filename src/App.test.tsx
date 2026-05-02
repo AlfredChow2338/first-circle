@@ -110,6 +110,9 @@ describe("App flow", () => {
     render(<App />);
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
     await screen.findByLabelText("CSV File Upload");
+    fireEvent.change(screen.getByLabelText("Batch Transfer Name"), {
+      target: { value: "Test batch" },
+    });
     const textFile = new File(["not,csv"], "invalid.txt", { type: "text/plain" });
     fireEvent.change(screen.getByLabelText("CSV File Upload"), { target: { files: [textFile] } });
     expect(await screen.findByRole("alert")).toHaveTextContent("Please upload a valid .csv file.");
@@ -123,6 +126,9 @@ describe("App flow", () => {
     render(<App />);
     const initial = useBatchTransferStore.getState().transactions.length;
     fireEvent.click(screen.getByRole("button", { name: uploadButtonName }));
+    fireEvent.change(screen.getByLabelText("Batch Transfer Name"), {
+      target: { value: "Q1 batch" },
+    });
     const csvFile = new File(
       [
         "Transaction Date,Account Number,Account Holder Name,Amount\n2025-02-20,000-123456789-01,John Doe,100.00",

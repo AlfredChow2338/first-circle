@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 
+import type { TransactionRecord } from "src/components/TransactionTable/types";
 import { computeBatchConfirmResult } from "src/store/batchTransfer/utils";
 import type { ParsedCsvRow } from "src/utils/csv/types";
 
@@ -28,6 +29,10 @@ const parsedRows: ParsedCsvRow[] = [
   },
 ];
 
+function withoutIds(transactions: TransactionRecord[]) {
+  return transactions.map(({ id: _id, ...rest }) => rest);
+}
+
 describe("runBatchConfirmComputation", () => {
   const originalWorker = globalThis.Worker;
 
@@ -43,9 +48,11 @@ describe("runBatchConfirmComputation", () => {
   it("falls back to main-thread computation when Worker is unavailable", async () => {
     // @ts-expect-error test setup for unavailable worker environments
     delete globalThis.Worker;
-    await expect(runBatchConfirmComputation(parsedRows)).resolves.toEqual(
-      computeBatchConfirmResult(parsedRows),
-    );
+    const result = await runBatchConfirmComputation(parsedRows);
+    const expected = computeBatchConfirmResult(parsedRows);
+    expect(withoutIds(result.transactions)).toEqual(withoutIds(expected.transactions));
+    expect(result.summary).toEqual(expected.summary);
+    expect(result.transactions.every((row) => row.id)).toBe(true);
   });
 
   it("uses worker result when worker succeeds", async () => {
@@ -87,8 +94,9 @@ describe("runBatchConfirmComputation", () => {
     // @ts-expect-error test worker mock
     globalThis.Worker = MockWorker;
 
-    await expect(runBatchConfirmComputation(parsedRows)).resolves.toEqual(
-      computeBatchConfirmResult(parsedRows),
-    );
+    const result = await runBatchConfirmComputation(parsedRows);
+    const expected = computeBatchConfirmResult(parsedRows);
+    expect(withoutIds(result.transactions)).toEqual(withoutIds(expected.transactions));
+    expect(result.summary).toEqual(expected.summary);
   });
 });

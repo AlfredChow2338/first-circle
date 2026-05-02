@@ -107,7 +107,7 @@ export function TransactionTable({
     <Table
       data={transactions}
       columns={columns}
-      getRowKey={(row, index) => `${row.accountNumber}-${index}`}
+      getRowKey={(row) => getTransactionKey(row)}
     />
   );
 }
