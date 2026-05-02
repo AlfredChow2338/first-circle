@@ -8,19 +8,19 @@
 - Computed summary metrics
 - Adding uploaded transactions into the home-page table without backend integration
 
-### Goals
+### Web Engineering Practices
 
-- Deliver a complete three-step modal transfer workflow with bidirectional step navigation and no state loss.
-- Ensure CSV parsing and validation logic are isolated in pure domain functions and fully testable.
-- Ensure UI behavior is covered through component/integration tests for table rendering, tooltip behavior, and step transitions.
-- Define coding rules and skill usage guidance that keep implementation consistent and reviewable.
-- Define a Claude Code assisted loop that accelerates development while preserving TDD discipline.
-
-### Offline Support
-
-- The app registers a service worker in production builds and precaches app-shell assets.
-- After one successful online visit, reloads can open the app while offline.
-- Offline mode uses IndexedDB as the source of truth for persisted transactions during hydration.
+- ✅ OfflService Worker & Offline-First Architecture (PWA)
+- ✅ IndexedDB caching for persisted transactions during hydration
+- ✅ Web Worker for Main Thread Offloading to prevent UI jank
+- ✅ Search Input Throttling
+- ✅ Build Optimization with Gzip and React Compiler (Auto Memoization)
+- ✅ Code Splitting & Lazy Loading & Tree Shaking with Vite
+- ✅ Critical CSS Extraction with Beasties improves FCP
+- ✅ Vanilla Extract (Zero-Runtime CSS-in-JS & Optimal cache efficiency)
+- ✅ TypeScript Strict Mode & Eslint rules & Prettier auto format
+- ✅ Expontentital backoff retry for large dataset process else rollback imprvoes error prone
+- ✅ Client-side pagination for better readability
 
 ### Security Protection
 
