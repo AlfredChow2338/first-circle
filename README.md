@@ -1,8 +1,10 @@
 # Batch Transaction Processing System
 
+Demo URL: https://alfredchow2338.github.io/first-circle/
+
 ### AI Practices
 
-- Editor: Cursor; Agent: Cursor, Claude
+- Editor: Cursor; Agent: Cursor, Claude; Model: Cursor Composer 2, Opus 4.7, Sonnet 4.6; MCP: Pencil; Skills: UIUX Pro Max, Vercel (React), OpenSpec, Web design guidelines.
 - Skills are shared via symlink in `.cursor/skills/`, `.claude/skills/`, `.agents/skills/` **SKILL.md**
 - _OpenSpec_ Spec-driven change lifecycle: explore → proposal → design → specs → tasks → implement → archive in `openspec/`
 - Subagent: A separate agent run delegated by the parent e.g. tech design, explore-only, engineer (Task tool / subagent types)
@@ -20,6 +22,7 @@
 9. ✅ TypeScript Strict Mode & Eslint rules & Prettier auto format
 10. ✅ Expontentital backoff retry for large dataset process else rollback imprvoes error prone
 11. ✅ Client-side pagination for better readability
+12. 📈 Virtual listing eg. `react-window` in case no pagination
 
 ### Security Protection
 
