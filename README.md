@@ -111,8 +111,13 @@ Demo URL: https://alfredchow2338.github.io/first-circle/
 
 ### Data Persistence Consideration
 
-- Local storage cannot handle large-size dataset due to 10MB size limit.
-- Another alternative will be IndexDB
-  - ✅ Async, much larger quota (browser/device dependent, often hundreds of MB+)
-  - ✅ Can store structured objects directly (without `JSON.stringify`)
-  - ✅ Libraries such as `idb` or `Dexie` provide good DX
+Local storage
+
+- ❌ Cannot handle large-size dataset due to 5MB size limit.
+- ❌ Operate synchronously, any read or write operation immediately executes and blocks the JavaScript event loop
+
+IndexDB
+
+- ✅ Async
+- ✅ Much larger size (browser/device dependent)
+- ✅ Can store structured objects directly (without `JSON.stringify`)
