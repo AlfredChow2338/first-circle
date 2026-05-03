@@ -12,17 +12,18 @@ Demo URL: https://alfredchow2338.github.io/first-circle/
 ### Web Engineering Practices
 
 1. ✅ Service Worker & Offline-First Architecture (PWA)
-2. ✅ IndexedDB caching for persisted transactions during hydration
-3. ✅ Web Worker for Main Thread Offloading to prevent UI jank
-4. ✅ Search Input Throttling
-5. ✅ Build Optimization with Gzip and React Compiler (Auto Memoization)
-6. ✅ Code Splitting & Lazy Loading & Tree Shaking with Vite
-7. ✅ Critical CSS Extraction with Beasties improves FCP
-8. ✅ Vanilla Extract (Zero-Runtime CSS-in-JS & Optimal cache efficiency)
-9. ✅ TypeScript Strict Mode & Eslint rules & Prettier auto format
-10. ✅ Expontentital backoff retry for large dataset process else rollback imprvoes error prone
-11. ✅ Client-side pagination for better readability
-12. 📈 Virtual listing eg. `react-window` in case no pagination
+2. ✅ Mobile-First Responsive Layout
+3. ✅ IndexedDB caching for persisted transactions during hydration
+4. ✅ Web Worker for Main Thread Offloading to prevent UI jank
+5. ✅ Search Input Throttling
+6. ✅ Build Optimization with Gzip and React Compiler (Auto Memoization)
+7. ✅ Code Splitting & Lazy Loading & Tree Shaking with Vite
+8. ✅ Critical CSS Extraction with Beasties improves FCP
+9. ✅ Vanilla Extract (Zero-Runtime CSS-in-JS & Optimal cache efficiency)
+10. ✅ TypeScript Strict Mode & Eslint rules & Prettier auto format
+11. ✅ Expontentital backoff retry for large dataset process else rollback imprvoes error prone
+12. ✅ Client-side pagination for better readability
+13. 📈 Future ehancement: Virtual listing eg. `react-window`
 
 ### Security Protection
 
@@ -30,7 +31,7 @@ Demo URL: https://alfredchow2338.github.io/first-circle/
 2. ✅ Hard limit of 10 MB and 10,000 data rows to prevent denial-of-service / resource abuse (in case uploading to server / storage)
 3. ✅ CSP, Permissions and Referrer-Policies (strict-origin-when-cross-origin)
 4. ✅ Regular audit and dependabot to prevent potential supply chain attacks
-5. 📈 Future: Server-side storage, encryption at rest (with keys not only in the client), authorization, retention policies, and no long-lived PII in client storage without explicit product/legal sign-off.
+5. 📈 Future enhancement: Server-side storage, encryption at rest (with keys not only in the client), authorization, retention policies, and no long-lived PII in client storage without explicit product/legal sign-off.
 
 ### Data Persistence Consideration
 
