@@ -32,6 +32,19 @@ Demo URL: https://alfredchow2338.github.io/first-circle/
 4. ✅ Regular audit and dependabot to prevent potential supply chain attacks
 5. 📈 Future: Server-side storage, encryption at rest (with keys not only in the client), authorization, retention policies, and no long-lived PII in client storage without explicit product/legal sign-off.
 
+### Data Persistence Consideration
+
+#### Local storage
+
+- ❌ Cannot handle large-size dataset due to 5MB size limit.
+- ❌ Operate synchronously, any read or write operation immediately executes and blocks the JavaScript event loop
+
+#### IndexDB
+
+- ✅ Async
+- ✅ Much larger size (browser/device dependent)
+- ✅ Can store structured objects directly (without `JSON.stringify`)
+
 ### Tech stack (React and TypeScript friendly)
 
 - @tanstack/react-table
@@ -108,16 +121,3 @@ Demo URL: https://alfredchow2338.github.io/first-circle/
 - Lint code: `pnpm lint`
 - Autofix lint issues: `pnpm lint:fix`
 - Recommended local sequence: `pnpm format && pnpm lint`
-
-### Data Persistence Consideration
-
-Local storage
-
-- ❌ Cannot handle large-size dataset due to 5MB size limit.
-- ❌ Operate synchronously, any read or write operation immediately executes and blocks the JavaScript event loop
-
-IndexDB
-
-- ✅ Async
-- ✅ Much larger size (browser/device dependent)
-- ✅ Can store structured objects directly (without `JSON.stringify`)
