@@ -32,8 +32,8 @@
     "papaparse": "^5.5.3",
     "react": "^19.2.5",
     "react-dom": "^19.2.5",
-    "react-hook-form": "^7.74.0",
-    "zod": "^4.4.2",
+    "react-hook-form": "^7.75.0",
+    "zod": "^4.4.3",
     "zustand": "^5.0.12"
   },
   "devDependencies": {
